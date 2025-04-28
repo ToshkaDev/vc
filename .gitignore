@@ -1,0 +1,7 @@
+#log files
+*log*
+work/
+.nf-test/
+.nextflow
+vc_results
+*test.snap
