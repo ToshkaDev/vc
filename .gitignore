@@ -3,5 +3,6 @@
 work/
 .nf-test/
 .nextflow
-vc_results
+results
 *test.snap
+data/genome/genome_index/

@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-params.outdir = "vc_results/fastp"
+params.outdir = "results/fastp"
 
 /*
  * FASTP
@@ -11,12 +11,12 @@ process FASTP {
     publishDir params.outdir, mode: 'copy'
 
     input:
-        tuple path(read1), path(read2)
+        tuple val(sample_id), path(read1), path(read2)
 
     output:
         path "*_fastqc.json", emit: json
         path "*_fastqc.html", emit: html
-        tuple path("*.R1.fq.gz"), path("*.R2.fq.gz"), emit: trimmed_reads
+        tuple val(sample_id), path("*.R1.fq.gz"), path("*.R2.fq.gz"), emit: trimmed_reads
 
     script:
     """

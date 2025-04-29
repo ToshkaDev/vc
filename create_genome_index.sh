@@ -21,10 +21,6 @@ docker run -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.i
     --runThreadN 8 \
     --runMode genomeGenerate \
     --genomeDir ${GENOME_DIR}/genome_index \
-    --genomeFastaFiles ${GENOME_DIR}/${GENOME} #\
+    --genomeFastaFiles ${GENOME_DIR}/${GENOME} \
     #--sjdbGTFfile ${GENOME_DIR}/${ANNOTATIONS} \
     #--sjdbOverhang 149
-
-
-
-
