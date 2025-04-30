@@ -19,7 +19,7 @@ ANNOTATION=genome.gtf
 OVERHANG=149
 # -w - setting working directory to ensure STAR writes logs and other temporary files 
 # within the mounted volume
-docker run -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
+docker run --rm -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
     --runThreadN 8 \
     --runMode genomeGenerate \
     --genomeDir ${GENOME_DIR}/genome_index \

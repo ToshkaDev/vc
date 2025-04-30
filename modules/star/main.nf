@@ -17,7 +17,9 @@ process STAR {
 
 
     output:
-        path "*", emit: aligned
+        path "*.tab"
+        path "*.out"
+        tuple val(sample_id), path("*.bam"), emit: bam
 
     script:
     """
