@@ -7,7 +7,7 @@
 
 # Input file recommendations:
 # FASTA: Ensembl "Primary Assembly" FASTA (e.g., Homo_sapiens.GRCh38.dna.primary_assembly.fa)
-# GTF: Matching Ensembl GTF (e.g., Homo_sapiens.GRCh38.109.gtf)
+# GTF: Matching Ensembl GTF (e.g., Homo_sapiens.GRCh38.113.gtf)
 
 # Set parameters GENOME, ANNOTATIONS (uncomment), and OVERHANG (uncomment) below 
 # according to your genome, annotations file, and the length of your reads.
@@ -24,5 +24,5 @@ docker run -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.i
     --runMode genomeGenerate \
     --genomeDir ${GENOME_DIR}/genome_index \
     --genomeFastaFiles ${GENOME_DIR}/${GENOME} \
-    #--sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
-    #--sjdbOverhang ${OVERHANG}
+    --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
+    --sjdbOverhang ${OVERHANG}

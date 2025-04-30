@@ -5,4 +5,4 @@ work/
 .nextflow
 results
 *test.snap
-data/genome/genome_index/
+data/genome/

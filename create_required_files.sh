@@ -8,10 +8,14 @@ GENOME_DIR=/data/genome
 REFERENCE=genome.fa
 ANNOTATION=genome.gtf
 
-# Obtain the genome: 
-wget -O .${GENOME_DIR}/${REFERENCE}.gz ${GENOME_LINK}
-gunzip -c .${GENOME_DIR}/${REFERENCE}.gz > .${GENOME_GENOME_DIRFOLDER}/${REFERENCE}
-rm .${GENOME_DIR}/${REFERENCE}.gz
+# [I commented out "Obtain the genome" section as the devlopment is just with the chromosome 22
+# while the entire chromosome is too big. Uncomment the below if your machine
+# has enough RAM (~100Gb) to work with the entire human genome] 
+
+# Obtain the genome.
+#wget -O .${GENOME_DIR}/${REFERENCE}.gz ${GENOME_LINK}
+#gunzip -c .${GENOME_DIR}/${REFERENCE}.gz > .${GENOME_GENOME_DIRFOLDER}/${REFERENCE}
+#rm .${GENOME_DIR}/${REFERENCE}.gz
 
 # Obtain the genome annotation:
 wget -O .${GENOME_DIR}/${ANNOTATION}.gz ${GENOME_ANNOTATION_LINK}
@@ -31,9 +35,5 @@ docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqe
 
 # 3) Obtaining BED file from GTF/GFF (e.g., from Ensembl/NCBI).
 # BED file describes genomic intervals (e.g., genes, exons, regions of interest)
-docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "ff2bed \
+docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
 < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
-
-
-
-
