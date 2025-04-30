@@ -21,8 +21,8 @@ process FASTP {
     script:
     """
     fastp -i ${read1} -I ${read2} \
-        -o ${read1.simpleName}.R1.fq.gz -O ${read1.simpleName}.R2.fq.gz \
-        -h ${read1.simpleName}_fastqc.html -j ${read1.simpleName}_fastqc.json \
+        -o ${sample_id}.R1.fq.gz -O ${sample_id}.R2.fq.gz \
+        -h ${sample_id}_fastqc.html -j ${sample_id}_fastqc.json \
         -q 20 -c -p --thread 4
     """
 }
