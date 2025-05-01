@@ -27,6 +27,7 @@ include { GATK_MARK_DUPLICATES } from './modules/gatk/markduplicates/main.nf'
 include { GATK_SPLIT_NCIGAR_READS } from './modules/gatk/splitncigar/main.nf'
 include { GATK_BASE_RECALIBRATOR } from './modules/gatk/baserecalibrate/main.nf'
 include { GATK_APPLY_BQSR } from './modules/gatk/applybqsr/main.nf'
+include { GATK_HAPLOTYPE_CALLER } from './modules/gatk/haplotypecaller/main.nf'
 
 
 workflow {
@@ -52,4 +53,7 @@ workflow {
     
     GATK_APPLY_BQSR(GATK_BASE_RECALIBRATOR.out.baserecal, params.genome, 
         params.genome_fai, params.genome_dict)
+
+    GATK_HAPLOTYPE_CALLER(GATK_APPLY_BQSR.out.bqsrapplied, params.genome, 
+        params.genome_fai, params.genome_dict, params.snpdb, params.snpdb_index)
 }

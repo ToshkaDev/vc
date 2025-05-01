@@ -14,7 +14,7 @@ process GATK_APPLY_BQSR {
         path genome_dict
 
     output:
-        path "*", emit: appliedbqsr
+        tuple val(sample_id), path("*.recal.bam"), path ("*.recal.bai"), emit: bqsrapplied
 
     script:
     """
