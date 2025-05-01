@@ -18,7 +18,7 @@ process GATK_SPLIT_NCIGAR_READS {
         path genome_dict
 
     output:
-        path "*", emit: cigar
+        tuple val(sample_id), path("*.cigar.bam"), path("*.cigar.bai"), emit: cigar
 
     script:
     """
