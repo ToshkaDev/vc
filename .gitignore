@@ -5,4 +5,6 @@ work/
 .nextflow
 results
 *test.snap
-data/genome/
+data/genome/*
+data/snp_db/*
+
