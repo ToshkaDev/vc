@@ -1,7 +1,8 @@
 #!/bin/bash
 
-GENOME_LINK=https://ftp.ensembl.org/pub/current_fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
-GENOME_ANNOTATION_LINK=https://ftp.ensembl.org/pub/current_gtf/homo_sapiens/Homo_sapiens.GRCh38.113.gtf.gz
+# Broad Institute's compatable files:
+GENOME_LINK=https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.gz
+GENOME_ANNOTATION_LINK=https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencode.v38.annotation.gtf.gz
 
 DATA_DIR=/data
 GENOME_DIR=/data/genome
@@ -21,6 +22,10 @@ ANNOTATION=genome.gtf
 wget -O .${GENOME_DIR}/${ANNOTATION}.gz ${GENOME_ANNOTATION_LINK}
 gunzip -c .${GENOME_DIR}/${ANNOTATION}.gz > .${GENOME_DIR}/${ANNOTATION}
 rm .${GENOME_DIR}/${ANNOTATION}.gz
+
+#Extracting a particular chromosome:
+# docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 bashs -c "samtools \
+#     faidx Homo_sapiens_assembly38.fasta chr22 > chr22.fa"
 
 ################
 
