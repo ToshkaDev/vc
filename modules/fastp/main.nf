@@ -2,9 +2,6 @@
 
 params.outdir = "results/fastp"
 
-/*
- * FASTP
- */
 process FASTP {
     container "community.wave.seqera.io/library/fastp:0.24.1--6214360065b44e0b"
 

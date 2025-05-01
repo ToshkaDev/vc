@@ -2,10 +2,6 @@
 
 params.outdir = "results/gatk/baserecalibrate"
 
-/*
- * STAR
- */
- 
 process GATK_BASE_RECALIBRATOR {
     container "community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867"
 

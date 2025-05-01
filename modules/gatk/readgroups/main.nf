@@ -2,10 +2,6 @@
 
 params.outdir = "results/gatk/readgroups"
 
-/*
- * STAR
- */
- 
 process GATK_ADD_REPLACE_READ_GROUPS {
     container "community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867"
 

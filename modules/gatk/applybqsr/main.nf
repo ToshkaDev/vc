@@ -2,10 +2,6 @@
 
 params.outdir = "results/gatk/applybqsr"
 
-/*
- * STAR
- */
- 
 process GATK_APPLY_BQSR {
     container "community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867"
 

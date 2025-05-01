@@ -2,10 +2,6 @@
 
 params.outdir = "results/star"
 
-/*
- * STAR
- */
- 
 process STAR {
     container "community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405"
 

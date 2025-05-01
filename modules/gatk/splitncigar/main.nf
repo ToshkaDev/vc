@@ -2,10 +2,6 @@
 
 params.outdir = "results/gatk/splitncigar"
 
-/*
- * STAR
- */
- 
 process GATK_SPLIT_NCIGAR_READS {
     container "community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867"
 
