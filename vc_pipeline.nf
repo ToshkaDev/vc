@@ -26,6 +26,8 @@ include { GATK_ADD_REPLACE_READ_GROUPS } from './modules/gatk/readgroups/main.nf
 include { GATK_MARK_DUPLICATES } from './modules/gatk/markduplicates/main.nf'
 include { GATK_SPLIT_NCIGAR_READS } from './modules/gatk/splitncigar/main.nf'
 include { GATK_BASE_RECALIBRATOR } from './modules/gatk/baserecalibrate/main.nf'
+include { GATK_APPLY_BQSR } from './modules/gatk/applybqsr/main.nf'
+
 
 workflow {
 
@@ -47,4 +49,7 @@ workflow {
     GATK_BASE_RECALIBRATOR(GATK_SPLIT_NCIGAR_READS.out.cigar, params.genome, 
         params.genome_fai, params.genome_dict, params.snpdb, params.snpdb_index, params.indels,
         params.indels_ndex)
+    
+    GATK_APPLY_BQSR(GATK_BASE_RECALIBRATOR.out.baserecal, params.genome, 
+        params.genome_fai, params.genome_dict)
 }

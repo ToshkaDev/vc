@@ -12,7 +12,7 @@ process GATK_BASE_RECALIBRATOR {
     publishDir params.outdir, mode: 'copy'
 
     input:
-        tuple val(sample_id), path(cigarpbam), path(cigarbai)
+        tuple val(sample_id), path(cigarbam), path(cigarbai)
         path genome
         path genome_fai
         path genome_dict
@@ -22,13 +22,13 @@ process GATK_BASE_RECALIBRATOR {
         path indel_index
 
     output:
-        path "*", emit: baserecab
+        tuple val(sample_id), path ("*.recal.table"), path(cigarbam), path(cigarbai), emit: baserecal
 
     script:
     """
 	gatk BaseRecalibrator \
 	-R $genome \
-	-I $cigarpbam \
+	-I $cigarbam \
 	--use-original-qualities \
 	--known-sites $snpdb \
 	--known-sites $indel \
