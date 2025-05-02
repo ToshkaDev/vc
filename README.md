@@ -1,4 +1,19 @@
 # 🧬 Nextflow Variant Calling Pipeline
+<!-- Uncomment when GitHub Actions CI is configured
+![Build Status](https://img.shields.io/github/actions/workflow/status/ToshkaDev/vc/vc_pipeline.nf?branch=main)
+-->
+![Nextflow](https://img.shields.io/badge/Nextflow-%E2%9C%94%20v24.10%2B-brightgreen)
+![License](https://img.shields.io/github/license/ToshkaDev/vc)
+![System Requirements](https://img.shields.io/badge/system-Java%2011%2B%20%7C%20Linux%2FmacOS%20%7C%20Nextflow%2024.10%2B-blue)
+![Docker](https://img.shields.io/badge/container-Docker%20%7C%20Singularity-orange)
+<!-- Uncomment when ready
+![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
+-->
+![Status](https://img.shields.io/badge/status-active%20development-yellow)
+![GATK Support](https://img.shields.io/badge/GATK-✓%20Supported-blueviolet)
+<!-- Uncomment when implemented
+![DeepVariant Support](https://img.shields.io/badge/DeepVariant-✓%20Supported-green)
+-->
 
 # Status: 🚧 Heavy development underway — expect frequent updates and improvements.
 
