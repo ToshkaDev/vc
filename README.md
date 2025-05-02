@@ -132,11 +132,13 @@ Log files and structured QC reports
 
 ## ✅ Testing
 
-Each module has small, testable datasets
+Each module is equipped with a test section to ensure continuous validation. To be able to run tests install [nf-test](https://www.nf-test.com/installation/) first
 
-Continuous validation via nf-test
+Per module test example: ``` nf-test test modules/gatk/readgroups/tests/main.nf.test ```
 
-Easy test runs for new environments or updates
+The workflow-level testing: ``` nf-test test tests/vc_pipeline.nf.test ```
+
+Running all the tests at once: ``` nf-test test ```
 
 ## 🧱 Built With
 
