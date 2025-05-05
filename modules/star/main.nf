@@ -14,7 +14,8 @@ process STAR {
 
     output:
         path "*.tab"
-        path "*.out"
+        path "*Log.out"
+        path "*Log.final.out", emit: logs
         tuple val(sample_id), path("*.bam"), emit: bam
 
     script:

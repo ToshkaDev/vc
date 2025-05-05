@@ -19,9 +19,11 @@ params.snpdb="${projectDir}/data/snp_db/snpdb.vcf.gz"
 params.snpdb_index="${projectDir}/data/snp_db/snpdb.vcf.gz.tbi"
 params.indels="${projectDir}/data/snp_db/indels.vcf.gz"
 params.indels_ndex="${projectDir}/data/snp_db/indels.vcf.gz.tbi"
+params.report_name = "multiqc_report"
 
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
+include { MULTIQC } from './modules/multiqc/main.nf'
 include { GATK_ADD_REPLACE_READ_GROUPS } from './modules/gatk/readgroups/main.nf'
 include { GATK_MARK_DUPLICATES } from './modules/gatk/markduplicates/main.nf'
 include { GATK_SPLIT_NCIGAR_READS } from './modules/gatk/splitncigar/main.nf'
@@ -39,6 +41,8 @@ workflow {
     FASTP(read_ch)
 
     STAR(FASTP.out.trimmed_reads, params.genome_index)
+
+    MULTIQC(FASTP.out.json.mix(STAR.out.logs).collect(), params.report_name)
 
     GATK_ADD_REPLACE_READ_GROUPS(STAR.out.bam)
 
