@@ -17,6 +17,8 @@ GENOME_DIR=/data/genome
 GENOME=genome.fa
 ANNOTATION=genome.gtf
 OVERHANG=149
+
+echo "Creating genome STAR index ..."
 # -w - setting working directory to ensure STAR writes logs and other temporary files 
 # within the mounted volume
 docker run --rm -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \

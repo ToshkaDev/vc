@@ -14,12 +14,16 @@ ANNOTATION=genome.gtf
 # has enough RAM (~100Gb) to work with the entire human genome] 
 
 # Obtain the genome.
+#echo "Downloading compressed genome in fasta format ..."
 #wget -O .${GENOME_DIR}/${REFERENCE}.gz ${GENOME_LINK}
+#echo "Unpacking genome from archive..."
 #gunzip -c .${GENOME_DIR}/${REFERENCE}.gz > .${GENOME_GENOME_DIRFOLDER}/${REFERENCE}
 #rm .${GENOME_DIR}/${REFERENCE}.gz
 
 # Obtain the genome annotation:
+echo "Downloading genome annotation file ..."
 wget -O .${GENOME_DIR}/${ANNOTATION}.gz ${GENOME_ANNOTATION_LINK}
+echo "Unpacking genome annotation from archive ..."
 gunzip -c .${GENOME_DIR}/${ANNOTATION}.gz > .${GENOME_DIR}/${ANNOTATION}
 rm .${GENOME_DIR}/${ANNOTATION}.gz
 
@@ -30,15 +34,18 @@ rm .${GENOME_DIR}/${ANNOTATION}.gz
 ################
 
 # 1) Create a simple fasta index file (.fai):
+echo "Creating simple fasta index file ..."
 docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
     faidx ${REFERENCE}
 
 # 2) Creaet a sequence dictionary used by GATK and Picard:
+echo "Creating sequence dictionary ..."
 docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867 gatk CreateSequenceDictionary \
     -R ${REFERENCE} \
     -O ${REFERENCE%.*}.dict
 
 # 3) Obtaining BED file from GTF/GFF (e.g., from Ensembl/NCBI).
 # BED file describes genomic intervals (e.g., genes, exons, regions of interest)
+echo "Creating BED file (describes genomic intervals) ..."
 docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
 < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
