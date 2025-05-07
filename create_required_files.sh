@@ -49,3 +49,17 @@ docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqe
 echo "Creating BED file (describes genomic intervals) ..."
 docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
 < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
+
+################
+# Download RNA edit sites file for filtering called variants
+
+RNA_EDIT_SITES_DIR=./${DATA_DIR}/rna_edit_sites
+RNA_EDIT_SITES_LINK="http://srv00.recas.ba.infn.it/webshare/ATLAS/download/TABLE1_hg38_v2.txt.gz"
+RNA_EDIT_SITES_FILE="rna_edit_sites.gz"
+
+mkdir -p ${RNA_EDIT_SITES_DIR}
+echo "Downloading RNA edit sites file ..."
+wget -O ./${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} ${RNA_EDIT_SITES_LINK}
+
+echo "Unpacking gz compressed file ... "
+gunzip  -c ./${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} > ./${RNA_EDIT_SITES_DIR}/rna_edit_sites.txt

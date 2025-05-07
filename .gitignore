@@ -7,4 +7,5 @@ results
 *test.snap
 data/genome/*
 data/snp_db/*
+data/rna_edit_sites/*
 

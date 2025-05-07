@@ -16,7 +16,7 @@ process GATK_HAPLOTYPE_CALLER {
         path snpdb_index
 
     output:
-        path "*", emit: calledsnps
+        tuple val(sample_id), path ("*.hc.vcf"), path ("*.hc.vcf.idx"), emit: calledsnps
 
     script:
     """
@@ -24,7 +24,7 @@ process GATK_HAPLOTYPE_CALLER {
     -I $recalbam \
     --standard-min-confidence-threshold-for-calling 20 \
     --dbsnp $snpdb \
-    --dont-use-soft-clipped-bases \
+    --dont-use-soft-clipped-bases true \
     -O ${sample_id}.hc.vcf \
 	--verbosity ERROR
     """

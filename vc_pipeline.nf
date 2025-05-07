@@ -21,6 +21,9 @@ params.indels="${projectDir}/data/snp_db/indels.vcf.gz"
 params.indels_ndex="${projectDir}/data/snp_db/indels.vcf.gz.tbi"
 params.report_name = "multiqc_report"
 
+// File containing RNA editing events
+params.rna_edit_sites = "${projectDir}/data/rna_edit_sites/rna_edit_sites.txt"
+
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
 include { MULTIQC } from './modules/multiqc/main.nf'
@@ -30,6 +33,8 @@ include { GATK_SPLIT_NCIGAR_READS } from './modules/gatk/splitncigar/main.nf'
 include { GATK_BASE_RECALIBRATOR } from './modules/gatk/baserecalibrate/main.nf'
 include { GATK_APPLY_BQSR } from './modules/gatk/applybqsr/main.nf'
 include { GATK_HAPLOTYPE_CALLER } from './modules/gatk/haplotypecaller/main.nf'
+include { GATK_VARIANT_FILTRATION } from './modules/gatk/variantfiltration/main.nf'
+include { FILTER_RNA_EDIT_SITES } from './modules/filterRNAeditsites/main.nf'
 
 
 workflow {
@@ -60,4 +65,9 @@ workflow {
 
     GATK_HAPLOTYPE_CALLER(GATK_APPLY_BQSR.out.bqsrapplied, params.genome, 
         params.genome_fai, params.genome_dict, params.snpdb, params.snpdb_index)
+
+    GATK_VARIANT_FILTRATION(GATK_HAPLOTYPE_CALLER.out.calledsnps, params.genome,
+        params.genome_fai, params.genome_dict)
+       
+    FILTER_RNA_EDIT_SITES(GATK_VARIANT_FILTRATION.out.filtered_variants, params.rna_edit_sites)
 }
