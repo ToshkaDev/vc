@@ -23,6 +23,8 @@ params.report_name = "multiqc_report"
 
 // File containing RNA editing events
 params.rna_edit_sites = "${projectDir}/data/rna_edit_sites/rna_edit_sites.txt"
+// File containing low complexity regions with chromosomes
+params.lcr_bed = "${projectDir}/data/lcr/lcr_with_chr.bed"
 
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
@@ -35,7 +37,7 @@ include { GATK_APPLY_BQSR } from './modules/gatk/applybqsr/main.nf'
 include { GATK_HAPLOTYPE_CALLER } from './modules/gatk/haplotypecaller/main.nf'
 include { GATK_VARIANT_FILTRATION } from './modules/gatk/variantfiltration/main.nf'
 include { FILTER_RNA_EDIT_SITES } from './modules/filterRNAeditsites/main.nf'
-
+include { FILTER_LCRS } from './modules/filterlcrs/main.nf'
 
 workflow {
 
@@ -70,4 +72,6 @@ workflow {
         params.genome_fai, params.genome_dict)
        
     FILTER_RNA_EDIT_SITES(GATK_VARIANT_FILTRATION.out.filtered_variants, params.rna_edit_sites)
+
+    FILTER_LCRS(FILTER_RNA_EDIT_SITES.out.rnaedit_filtered_vars, params.lcr_bed)
 }

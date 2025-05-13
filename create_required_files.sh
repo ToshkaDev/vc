@@ -51,15 +51,29 @@ docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqe
 < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
 
 ################
-# Download RNA edit sites file for filtering called variants
+# Download the RNA edit sites file for filtering called variants
 
-RNA_EDIT_SITES_DIR=./${DATA_DIR}/rna_edit_sites
+RNA_EDIT_SITES_DIR=.${DATA_DIR}/rna_edit_sites
 RNA_EDIT_SITES_LINK="http://srv00.recas.ba.infn.it/webshare/ATLAS/download/TABLE1_hg38_v2.txt.gz"
 RNA_EDIT_SITES_FILE="rna_edit_sites.gz"
 
 mkdir -p ${RNA_EDIT_SITES_DIR}
 echo "Downloading RNA edit sites file ..."
-wget -O ./${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} ${RNA_EDIT_SITES_LINK}
+wget -O ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} ${RNA_EDIT_SITES_LINK}
 
 echo "Unpacking gz compressed file ... "
-gunzip  -c ./${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} > ./${RNA_EDIT_SITES_DIR}/rna_edit_sites.txt
+gunzip  -c ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} > ./${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE%.*}.txt
+
+
+################
+# Download the LCR bed file for human genome for low complexity regions (LCRs) filtering
+
+LCR_DIR=.${DATA_DIR}/lcr
+LCR_LINK="https://github.com/lh3/varcmp/blob/master/scripts/LCR-hs38.bed.gz?raw=true"
+LCR_FILE=lcr_with_chr.bed.gz
+
+echo "Downloading low complexity regions (LCR) file for a genome ..."
+curl -o $LCR_DIR/$LCR_FILE -L https://github.com/lh3/varcmp/blob/master/scripts/LCR-hs38.bed.gz?raw=true
+
+echo "Unpacking LCR gz compressed file ... "
+gunzip -c $LCR_DIR/$LCR_FILE> $LCR_DIR/${LCR_FILE%.*}
