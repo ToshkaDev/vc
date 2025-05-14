@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Broad Institute's compatable files:
-GENOME_LINK=https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.gz
+GENOME_LINK=https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta
 GENOME_ANNOTATION_LINK=https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencode.v38.annotation.gtf.gz
 
 DATA_DIR=/data
@@ -14,12 +14,9 @@ ANNOTATION=genome.gtf
 # has enough RAM (~100Gb) to work with the entire human genome] 
 
 # Obtain the genome.
-if [ ! -f .${GENOME_GENOME_DIRFOLDER}/${REFERENCE} ]; then 
-    echo "Downloading compressed genome in fasta format ..."
-    wget -O .${GENOME_DIR}/${REFERENCE}.gz ${GENOME_LINK}
-    echo "Unpacking genome from archive..."
-    gunzip -c .${GENOME_DIR}/${REFERENCE}.gz > .${GENOME_GENOME_DIRFOLDER}/${REFERENCE}
-    rm .${GENOME_DIR}/${REFERENCE}.gz
+if [ ! -f .${GENOME_DIR}/${REFERENCE} ]; then 
+    echo "Downloading genome in fasta format ..."
+    wget -O .${GENOME_DIR}/${REFERENCE} ${GENOME_LINK}
 fi
 
 # Obtain the genome annotation:
