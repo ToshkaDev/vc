@@ -14,18 +14,22 @@ ANNOTATION=genome.gtf
 # has enough RAM (~100Gb) to work with the entire human genome] 
 
 # Obtain the genome.
-#echo "Downloading compressed genome in fasta format ..."
-#wget -O .${GENOME_DIR}/${REFERENCE}.gz ${GENOME_LINK}
-#echo "Unpacking genome from archive..."
-#gunzip -c .${GENOME_DIR}/${REFERENCE}.gz > .${GENOME_GENOME_DIRFOLDER}/${REFERENCE}
-#rm .${GENOME_DIR}/${REFERENCE}.gz
+if [ ! -f .${GENOME_GENOME_DIRFOLDER}/${REFERENCE} ]; then 
+    echo "Downloading compressed genome in fasta format ..."
+    wget -O .${GENOME_DIR}/${REFERENCE}.gz ${GENOME_LINK}
+    echo "Unpacking genome from archive..."
+    gunzip -c .${GENOME_DIR}/${REFERENCE}.gz > .${GENOME_GENOME_DIRFOLDER}/${REFERENCE}
+    rm .${GENOME_DIR}/${REFERENCE}.gz
+fi
 
 # Obtain the genome annotation:
-echo "Downloading genome annotation file ..."
-wget -O .${GENOME_DIR}/${ANNOTATION}.gz ${GENOME_ANNOTATION_LINK}
-echo "Unpacking genome annotation from archive ..."
-gunzip -c .${GENOME_DIR}/${ANNOTATION}.gz > .${GENOME_DIR}/${ANNOTATION}
-rm .${GENOME_DIR}/${ANNOTATION}.gz
+if [ ! -f .${GENOME_DIR}/${ANNOTATION} ]; then 
+    echo "Downloading genome annotation file ..."
+    wget -O .${GENOME_DIR}/${ANNOTATION}.gz ${GENOME_ANNOTATION_LINK}
+    echo "Unpacking genome annotation from archive ..."
+    gunzip -c .${GENOME_DIR}/${ANNOTATION}.gz > .${GENOME_DIR}/${ANNOTATION}
+    rm .${GENOME_DIR}/${ANNOTATION}.gz
+fi
 
 #Extracting a particular chromosome:
 # docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 bashs -c "samtools \
@@ -54,26 +58,33 @@ docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqe
 # Download the RNA edit sites file for filtering called variants
 
 RNA_EDIT_SITES_DIR=.${DATA_DIR}/rna_edit_sites
-RNA_EDIT_SITES_LINK="http://srv00.recas.ba.infn.it/webshare/ATLAS/download/TABLE1_hg38_v2.txt.gz"
-RNA_EDIT_SITES_FILE="rna_edit_sites.gz"
+RNA_EDIT_SITES_LINK=http://srv00.recas.ba.infn.it/webshare/ATLAS/download/TABLE1_hg38_v2.txt.gz
+RNA_EDIT_SITES_FILE=rna_edit_sites.gz
 
 mkdir -p ${RNA_EDIT_SITES_DIR}
-echo "Downloading RNA edit sites file ..."
-wget -O ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} ${RNA_EDIT_SITES_LINK}
+if [ ! -f ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE%.*}.txt ]; then
+    echo "Downloading RNA edit sites file ..."
+    wget -O ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} ${RNA_EDIT_SITES_LINK}
 
-echo "Unpacking gz compressed file ... "
-gunzip  -c ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} > ./${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE%.*}.txt
-
+    echo "Unpacking gz compressed file ... "
+    gunzip  -c ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE} > ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE%.*}.txt
+    rm ${RNA_EDIT_SITES_DIR}/${RNA_EDIT_SITES_FILE}
+fi
 
 ################
 # Download the LCR bed file for human genome for low complexity regions (LCRs) filtering
 
 LCR_DIR=.${DATA_DIR}/lcr
-LCR_LINK="https://github.com/lh3/varcmp/blob/master/scripts/LCR-hs38.bed.gz?raw=true"
+LCR_LINK=https://github.com/lh3/varcmp/blob/master/scripts/LCR-hs38.bed.gz?raw=true
 LCR_FILE=lcr_with_chr.bed.gz
 
-echo "Downloading low complexity regions (LCR) file for a genome ..."
-curl -o $LCR_DIR/$LCR_FILE -L https://github.com/lh3/varcmp/blob/master/scripts/LCR-hs38.bed.gz?raw=true
+mkdir -p ${LCR_DIR}
 
-echo "Unpacking LCR gz compressed file ... "
-gunzip -c $LCR_DIR/$LCR_FILE> $LCR_DIR/${LCR_FILE%.*}
+if [ ! -f ${LCR_DIR}/${LCR_FILE%.*} ]; then
+    echo "Downloading low complexity regions (LCR) file for a genome ..."
+    curl -o ${LCR_DIR}/${LCR_FILE} -L https://github.com/lh3/varcmp/blob/master/scripts/LCR-hs38.bed.gz?raw=true
+
+    echo "Unpacking LCR gz compressed file ... "
+    gunzip -c ${LCR_DIR}/${LCR_FILE} > ${LCR_DIR}/${LCR_FILE%.*}
+    rm ${LCR_DIR}/${LCR_FILE}
+fi
