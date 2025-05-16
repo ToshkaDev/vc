@@ -9,4 +9,6 @@ data/genome/*
 data/snp_db/*
 data/rna_edit_sites/*
 data/lcr/*
+data/assembly_mapping/*
+data/ncbi_dbsnp/*
 
