@@ -137,3 +137,25 @@ if [ ! -f ${DBSNP_DIR}/${DBSNP_FILE} ]; then
         grep ${refseq[$i]} ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.vcf | sed "s/${refseq[$i]}/${chr[$i]}/g" | cut -f1,2 >> ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.chr.tsv
     done
 fi
+
+
+#####
+# Downloading a variant call format (VCF) file derived from the 1000 Genomes Project Phase 3 data, 
+# aligned to the GRCh38 (hg38) human genome reference. This file includes variant sites with an allele frequency (AF) 
+# of at least 1% (AF ≥ 0.01). 
+# The final prepared file with variants with allele frequency (AF) ≥ 0.01 will be used for variant filtering 
+GPP_DIR=${DATA_DIR}/gpp_vcf
+GPP_LINK=https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_phase3_v4_20130502.sites.hg38.vcf
+GPP_FILE=1000G_phase3_sites.hg38.vcf
+
+mkdir -p .${GPP_DIR}
+
+if [ ! -f .${GPP_DIR}/${GPP_FILE} ]; then
+    echo "Downloading the VCF file derived from the 1000 Genomes Project Phase 3 data and its index (5.3G + 1.09M; ~4-5 min) ..."
+    wget -O .${GPP_DIR}/${GPP_FILE} ${GPP_LINK}
+    wget -O .${GPP_DIR}/${GPP_FILE}.idx ${GPP_LINK}.idx
+
+    echo "Filter variants with allele frequency (AF) ≥ 0.01 to be used for variant filtering ..."
+    docker run --rm -w ${GPP_DIR} -v ./data:/data community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
+        bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
+fi

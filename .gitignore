@@ -11,4 +11,5 @@ data/rna_edit_sites/*
 data/lcr/*
 data/assembly_mapping/*
 data/ncbi_dbsnp/*
+data/gpp_vcf/*
 
