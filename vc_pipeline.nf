@@ -21,10 +21,20 @@ params.indels="${projectDir}/data/snp_db/indels.vcf.gz"
 params.indels_ndex="${projectDir}/data/snp_db/indels.vcf.gz.tbi"
 params.report_name = "multiqc_report"
 
+// SNPs file derived from the 1000 Genomes Project Phase 3 data, aligned to the GRCh38 (hg38) human genome reference
+params.gpp3snp="${projectDir}/data/gpp_vcf/1000G_phase3_sites.hg38.vcf"
+params.gpp3snp_index="${projectDir}/data/gpp_vcf/1000G_phase3_sites.hg38.vcf.idx"
+
+
 // File containing RNA editing events
 params.rna_edit_sites = "${projectDir}/data/rna_edit_sites/rna_edit_sites.txt"
 // File containing low complexity regions with chromosomes
 params.lcr_bed = "${projectDir}/data/lcr/lcr_with_chr.bed"
+
+// File containing common variants with allele frequency >= 0.01
+params.gpp3snp_af01="${projectDir}/data/gpp_vcf/1000G_phase3_sites.hg38.af01.vcf"
+// File containing the latest ncbi dbsnp variants
+params.ncbi_dbsnp = "${projectDir}/data/ncbi_dbsnp/ncbi_dbsnp_latest.common.chr.tsv"
 
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
@@ -38,6 +48,7 @@ include { GATK_HAPLOTYPE_CALLER } from './modules/gatk/haplotypecaller/main.nf'
 include { GATK_VARIANT_FILTRATION } from './modules/gatk/variantfiltration/main.nf'
 include { FILTER_RNA_EDIT_SITES } from './modules/filterRNAeditsites/main.nf'
 include { FILTER_LCRS } from './modules/filterlcrs/main.nf'
+include { FILTER_COMMON_VARIANTS } from './modules/filtercommonvars/main.nf'
 
 workflow {
 
@@ -66,7 +77,7 @@ workflow {
         params.genome_fai, params.genome_dict)
 
     GATK_HAPLOTYPE_CALLER(GATK_APPLY_BQSR.out.bqsrapplied, params.genome, 
-        params.genome_fai, params.genome_dict, params.snpdb, params.snpdb_index)
+        params.genome_fai, params.genome_dict, params.gpp3snp, params.gpp3snp_index)
 
     GATK_VARIANT_FILTRATION(GATK_HAPLOTYPE_CALLER.out.calledsnps, params.genome,
         params.genome_fai, params.genome_dict)
@@ -74,4 +85,6 @@ workflow {
     FILTER_RNA_EDIT_SITES(GATK_VARIANT_FILTRATION.out.filtered_variants, params.rna_edit_sites)
 
     FILTER_LCRS(FILTER_RNA_EDIT_SITES.out.rnaedit_filtered_vars, params.lcr_bed)
+
+    FILTER_COMMON_VARIANTS(FILTER_LCRS.out.lcr_filtered_vars, params.gpp3snp_af01, params.ncbi_dbsnp)
 }
