@@ -31,8 +31,6 @@ Includes QC, alignment, duplicate marking, BQSR, variant calling, and multi-stag
 
 Per-step testing with small datasets
 
-#Compatible with Docker, Singularity, and Conda
-
 Ready for use on local, HPC, or cloud platforms
 
 ## System Requirements
