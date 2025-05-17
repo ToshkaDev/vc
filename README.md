@@ -78,6 +78,8 @@ cd vc
 - crates a BED file from the provided annotation file. The script can work with other genomes if corresponding links are provided (variables GENOME_LINK and GENOME_ANNOTATION_LINK)
 - downloads and prepares an RNA edit sites file for the human genome. For other genomes provide an appropriate link (the RNA_EDIT_SITES_LINK variable)
 - downloads and prepares a low complexity regions file for the human genome. For other genomes provide and appropriate link (the LCR_LINK variable)
+- prepares a file containing the mapping of RefSeq genome assembly identifiers to chromosome names (will be used to prepare the NCBI dbsnp set for filtering common snps)
+- downloads and prepares the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set (both will be used to filter out common snps)
 
 `./create_genome_index.sh` creates a STAR genome index, with chr and scaffolds, primary assembly, and transcriptome as recommended by the STAR manual.
 
@@ -112,6 +114,7 @@ nextflow run vc_pipeline.nf
   - Filtering low-quality variants (GATK VariantFiltration)
   - Filtering RNA edit sites (using vcftools and a set of RNA edit sites)
   - Filtering low complexity regions (using SnpSift and a corresponding set of marked low complexity regions)
+  - Filtering common snps (using the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set)
 
 ## 📦 Inputs
 
