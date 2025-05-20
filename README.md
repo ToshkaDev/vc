@@ -77,7 +77,7 @@ cd vc
 - downloads and prepares an RNA edit sites file for the human genome. For other genomes provide an appropriate link (the RNA_EDIT_SITES_LINK variable)
 - downloads and prepares a low complexity regions file for the human genome. For other genomes provide and appropriate link (the LCR_LINK variable)
 - prepares a file containing the mapping of RefSeq genome assembly identifiers to chromosome names (will be used to prepare the NCBI dbsnp set for filtering common snps)
-- downloads and prepares the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set (both will be used to filter out common snps)
+- downloads and prepares the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set (~30 GB; download time ~45 min). Both will be used to filter out common snps
 
 `./create_genome_index.sh` creates a STAR genome index, with chr and scaffolds, primary assembly, and transcriptome as recommended by the STAR manual.
 
