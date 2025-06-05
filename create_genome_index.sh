@@ -21,10 +21,27 @@ OVERHANG=149
 echo "Creating genome STAR index ..."
 # -w - setting working directory to ensure STAR writes logs and other temporary files 
 # within the mounted volume
-docker run --rm -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
-    --runThreadN 8 \
-    --runMode genomeGenerate \
-    --genomeDir ${GENOME_DIR}/genome_index \
-    --genomeFastaFiles ${GENOME_DIR}/${GENOME} \
-    --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
-    --sjdbOverhang ${OVERHANG}
+if command -v docker &> /dev/null; then
+    echo "Docker found. Running with Docker..."
+    docker run --rm -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
+        --runThreadN 8 \
+        --runMode genomeGenerate \
+        --genomeDir ${GENOME_DIR}/genome_index \
+        --genomeFastaFiles ${GENOME_DIR}/${GENOME} \
+        --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
+        --sjdbOverhang ${OVERHANG}
+
+elif command -v singularity &> /dev/null; then
+    echo "Singularity found. Running with Singularity..."
+    singularity exec --pwd ${GENOME_DIR}/genome_index --bind ./data:/data docker://community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
+        --runThreadN 8 \
+        --runMode genomeGenerate \
+        --genomeDir ${GENOME_DIR}/genome_index \
+        --genomeFastaFiles ${GENOME_DIR}/${GENOME} \
+        --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
+        --sjdbOverhang ${OVERHANG}
+
+else
+    echo "Error: Neither Docker nor Singularity found in the environment."
+    exit 1
+fi

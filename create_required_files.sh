@@ -33,22 +33,45 @@ fi
 
 ################
 
-# 1) Create a simple fasta index file (.fai):
-echo "Creating simple fasta index file ..."
-docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
-    faidx ${REFERENCE}
+echo "Creating simple fasta index, sequence, and BED files ..."
 
-# 2) Creaet a sequence dictionary used by GATK and Picard:
-echo "Creating sequence dictionary ..."
-docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867 gatk CreateSequenceDictionary \
-    -R ${REFERENCE} \
-    -O ${REFERENCE%.*}.dict
+if command -v docker &> /dev/null; then
+    # 1) Create a simple fasta index file (.fai):
+    echo "Creating simple fasta index file ..."
+    docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
+        faidx ${REFERENCE}
 
-# 3) Obtaining BED file from GTF/GFF (e.g., from Ensembl/NCBI).
-# BED file describes genomic intervals (e.g., genes, exons, regions of interest)
-echo "Creating BED file (describes genomic intervals) ..."
-docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
-< ${ANNOTATION} > ${ANNOTATION%.*}.bed"
+    # 2) Creaet a sequence dictionary used by GATK:
+    echo "Creating sequence dictionary ..."
+    docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867 gatk CreateSequenceDictionary \
+        -R ${REFERENCE} \
+        -O ${REFERENCE%.*}.dict
+
+    # 3) Obtaining BED file from GTF/GFF (e.g., from Ensembl/NCBI).
+    # BED file describes genomic intervals (e.g., genes, exons, regions of interest)
+    echo "Creating BED file (describes genomic intervals) ..."
+    docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
+    < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
+
+elif command -v singularity &> /dev/null; then
+    echo "Singularity found. Running with Singularity..."
+    echo "Creating simple fasta index file ..."
+    singularity exec --pwd ${GENOME_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
+        faidx ${REFERENCE}
+
+    echo "Creating sequence dictionary ..."
+    singularity exec --pwd ${GENOME_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867 gatk CreateSequenceDictionary \
+        -R ${REFERENCE} \
+        -O ${REFERENCE%.*}.dict
+
+    echo "Creating BED file (describes genomic intervals) ..."
+    singularity exec --pwd ${GENOME_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
+    < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
+
+else
+    echo "Error: Neither Docker nor Singularity found in the environment."
+    exit 1
+fi
 
 ################
 # Download the RNA edit sites file for filtering called variants
@@ -155,6 +178,19 @@ if [ ! -f .${GPP_DIR}/${GPP_FILE} ]; then
     wget -O .${GPP_DIR}/${GPP_FILE}.idx ${GPP_LINK}.idx
 
     echo "Filter variants with allele frequency (AF) ≥ 0.01 to be used for variant filtering ..."
-    docker run --rm -w ${GPP_DIR} -v ./data:/data community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
-        bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
+
+    if command -v docker &> /dev/null; then
+        echo "Docker found. Running with Docker..."
+        docker run --rm -w ${GPP_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
+            bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
+
+    elif command -v singularity &> /dev/null; then
+        echo "Singularity found. Running with Singularity..."
+        singularity exec --pwd ${GPP_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
+            bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
+    else
+        echo "Error: Neither Docker nor Singularity found in the environment."
+        exit 1
+    fi
+
 fi
