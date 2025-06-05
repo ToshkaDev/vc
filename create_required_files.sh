@@ -9,9 +9,8 @@ GENOME_DIR=/data/genome
 REFERENCE=genome.fa
 ANNOTATION=genome.gtf
 
-# [I commented out "Obtain the genome" section as the devlopment is just with the chromosome 22
-# while the entire chromosome is too big. Uncomment the below if your machine
-# has enough RAM (~100Gb) to work with the entire human genome] 
+# The devlopment is just with the chromosome 22. Empty the .${GENOME_DIR}/${REFERENCE} folder before running the script if you want to work with the entire human genome 
+
 
 # Obtain the genome.
 if [ ! -f .${GENOME_DIR}/${REFERENCE} ]; then 
