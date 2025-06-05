@@ -63,14 +63,14 @@ git clone https://github.com/ToshkaDev/vc.git
 
 cd vc
 
-./create_required_files.sh
+./create_required_files.sh docker
 
-./create_genome_index.sh
+./create_genome_index.sh docker
 
 ./obtain_snp_dbs.sh
 ```
 
-`./create_required_files.sh`:
+`./create_required_files.sh docker` (for local setup) or `./create_required_files.sh singularity` (for HPC):
 - obtains the human genome and its annotation
 - creates fai index and sequence dictionary used by GATK (and Picard)
 - crates a BED file from the provided annotation file. The script can work with other genomes if corresponding links are provided (variables GENOME_LINK and GENOME_ANNOTATION_LINK)
@@ -79,19 +79,26 @@ cd vc
 - prepares a file containing the mapping of RefSeq genome assembly identifiers to chromosome names (will be used to prepare the NCBI dbsnp set for filtering common snps)
 - downloads and prepares the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set (~30 GB; download time ~45 min). Both will be used to filter out common snps
 
-`./create_genome_index.sh` creates a STAR genome index, with chr and scaffolds, primary assembly, and transcriptome as recommended by the STAR manual.
+`./create_genome_index.sh docker` (for local setup) `./create_genome_index.sh singularity` (for HPC) creates a STAR genome index, with chr and scaffolds, primary assembly, and transcriptome as recommended by the STAR manual.
 
 The **data/genome** folder currently includes human chr22. To work with the entire human genome simply delete the genome.fa file in the ./data/genome folder before running `create_required_files.sh`. Genome indexing with STAR for the entire human geome (GRCh38 + GENCODE GTF annotaion file) will require ~100-150 GB of RAM. On a machine with 32 threads, SSD, --sjdbOverhang 100 (common for 101 bp reads), and 128–150 GB RAM available this can take ~1.5–2 hours.
 
-`./obtain_snp_dbs.sh` 
+`./obtain_snp_dbs.sh`:
 - obtains known variants (dbSNP for known SNPs)
 - known indels (Mills and 1000G) following [GATK Best Practices](https://gatk.broadinstitute.org/hc/en-us/articles/360035890811--How-to-Recalibrate-base-quality-scores-run-BQSR
 )
 
 **Once the preparatory steps are complete, start the pipeline**:
 ```
-nextflow run vc_pipeline.nf
+nextflow run vc_pipeline.nf -profile local
 ```
+to run locally
+
+or
+```
+nextflow run vc_pipeline.nf -profile hpc
+```
+to run on a high-performance cluster
 
 ## 🛠 Workflow Overview
 
