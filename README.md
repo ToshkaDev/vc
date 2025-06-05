@@ -88,9 +88,15 @@ The **data/genome** folder currently includes human chr22. To work with the enti
 - known indels (Mills and 1000G) following [GATK Best Practices](https://gatk.broadinstitute.org/hc/en-us/articles/360035890811--How-to-Recalibrate-base-quality-scores-run-BQSR
 )
 
-`./prepare_common_snps.sh docker` (for local setup)  `./prepare_common_snps.sh singularity` (for HPC):
-- prepares a file containing the mapping of RefSeq genome assembly identifiers to chromosome names (will be used to prepare the NCBI dbsnp set for filtering common snps)
-- downloads and prepares the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set (~30 GB; download time ~45 min). Both will be used to filter out common snps
+`./prepare_common_snps.sh docker` (for local setup)  `./prepare_common_snps.sh singularity` (for HPC). This is a long running script that prepares files for common snps filtation:
+- downloads and prepares NCBI dbsnp database file (> 27.5 G, download time 10-20 min). The entire process takes  ~1.5 hour:
+    - downloading gz compressed NCBI dbsnp database file (>27.5 G, 10-20 min)
+    - initial preparation (~15 min)
+    - labeling variants with allele frequency (AF) >= 0.01 (~15 min)
+    - replacing refseq identifiers with corresponding chromosome identifiers in NCBI dbsnp file (~40 min)
+- downloads and prepares the 1000 Genomes Project Phase 3 data variant sites:
+    - downloading the VCF file derived from the 1000 Genomes Project Phase 3 data (5.3G + 1.09M; ~4-5 min)
+    - filtering variants with AF ≥ 0.01
 
 **Once the preparatory steps are complete, start the pipeline**:
 ```
