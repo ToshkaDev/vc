@@ -23,6 +23,8 @@ GENOME=genome.fa
 ANNOTATION=genome.gtf
 OVERHANG=149
 
+mkdir -p .${GENOME_DIR}/genome_index
+
 echo "Creating genome STAR index ..."
 # -w - setting working directory to ensure STAR writes logs and other temporary files 
 # within the mounted volume
