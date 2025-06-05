@@ -13,6 +13,11 @@
 # according to your genome, annotations file, and the length of your reads.
 # --sjdbOverhang equals to the maximum read length you plan to map-1. 
 
+if [ "$1" != "docker" ] && [ "$1" != "singularity" ]; then
+    echo "Specify either 'singularity' or 'docker' as an argument to the script, ex., $0 docker"
+    exit 1
+fi
+
 GENOME_DIR=/data/genome
 GENOME=genome.fa
 ANNOTATION=genome.gtf
@@ -40,8 +45,4 @@ elif [ "$1" == "singularity" ]; then
         --genomeFastaFiles ${GENOME_DIR}/${GENOME} \
         --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
         --sjdbOverhang ${OVERHANG}
-
-else
-    echo "Specify either 'singularity' or 'docker' as an argument to the script, ex., $0 docker"
-    exit 1
 fi
