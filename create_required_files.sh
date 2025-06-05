@@ -32,11 +32,10 @@ fi
 #     faidx Homo_sapiens_assembly38.fasta chr22 > chr22.fa"
 
 ################
-
 echo "Creating simple fasta index, sequence, and BED files ..."
 
 if [ "$1" == "docker" ]; then
-    echo "Singularity found. Running with Singularity..."
+    echo "Docker found. Running with Docker..."
     # 1) Create a simple fasta index file (.fai):
     echo "Creating simple fasta index file ..."
     docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
@@ -179,7 +178,6 @@ if [ ! -f .${GPP_DIR}/${GPP_FILE} ]; then
     wget -O .${GPP_DIR}/${GPP_FILE}.idx ${GPP_LINK}.idx
 
     echo "Filter variants with allele frequency (AF) ≥ 0.01 to be used for variant filtering ..."
-
     if [ "$1" == "docker" ]; then
         echo "Docker found. Running with Docker..."
         docker run --rm -w ${GPP_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
