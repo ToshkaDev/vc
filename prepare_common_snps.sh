@@ -89,4 +89,5 @@ if [ ! -f .${GPP_DIR}/${GPP_FILE} ]; then
         echo "Singularity found. Running with Singularity..."
         singularity exec --pwd ${GPP_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
             bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
+    fi
 fi
