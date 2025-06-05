@@ -21,7 +21,7 @@ OVERHANG=149
 echo "Creating genome STAR index ..."
 # -w - setting working directory to ensure STAR writes logs and other temporary files 
 # within the mounted volume
-if command -v docker &> /dev/null; then
+if [ "$1" == "docker" ]; then
     echo "Docker found. Running with Docker..."
     docker run --rm -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
@@ -31,7 +31,7 @@ if command -v docker &> /dev/null; then
         --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
         --sjdbOverhang ${OVERHANG}
 
-elif command -v singularity &> /dev/null; then
+elif [ "$1" == "singularity" ]; then
     echo "Singularity found. Running with Singularity..."
     singularity exec --pwd ${GENOME_DIR}/genome_index --bind ./data:/data docker://community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
@@ -42,6 +42,6 @@ elif command -v singularity &> /dev/null; then
         --sjdbOverhang ${OVERHANG}
 
 else
-    echo "Error: Neither Docker nor Singularity found in the environment."
+    echo "Specify either 'singularity' or 'docker' as an argument to the script, ex., $0 docker"
     exit 1
 fi

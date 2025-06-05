@@ -35,7 +35,8 @@ fi
 
 echo "Creating simple fasta index, sequence, and BED files ..."
 
-if command -v docker &> /dev/null; then
+if [ "$1" == "docker" ]; then
+    echo "Singularity found. Running with Singularity..."
     # 1) Create a simple fasta index file (.fai):
     echo "Creating simple fasta index file ..."
     docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
@@ -53,7 +54,7 @@ if command -v docker &> /dev/null; then
     docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
     < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
 
-elif command -v singularity &> /dev/null; then
+elif [ "$1" == "singularity" ]; then
     echo "Singularity found. Running with Singularity..."
     echo "Creating simple fasta index file ..."
     singularity exec --pwd ${GENOME_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
@@ -69,7 +70,7 @@ elif command -v singularity &> /dev/null; then
     < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
 
 else
-    echo "Error: Neither Docker nor Singularity found in the environment."
+    echo "Specify either 'singularity' or 'docker' as an argument to the script, ex., $0 docker"
     exit 1
 fi
 
@@ -179,18 +180,18 @@ if [ ! -f .${GPP_DIR}/${GPP_FILE} ]; then
 
     echo "Filter variants with allele frequency (AF) ≥ 0.01 to be used for variant filtering ..."
 
-    if command -v docker &> /dev/null; then
+    if [ "$1" == "docker" ]; then
         echo "Docker found. Running with Docker..."
         docker run --rm -w ${GPP_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
             bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
 
-    elif command -v singularity &> /dev/null; then
+    elif [ "$1" == "singularity" ]; then
         echo "Singularity found. Running with Singularity..."
         singularity exec --pwd ${GPP_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
             bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
+
     else
-        echo "Error: Neither Docker nor Singularity found in the environment."
+        echo "Specify either 'singularity' or 'docker' as an argument to the script, ex., $0 docker"
         exit 1
     fi
-
 fi
