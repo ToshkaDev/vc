@@ -4,8 +4,8 @@
 # the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set (~30 GB; download time ~45 min).
 # These files will be used to filter out common snps
 
-if [ "$1" != "docker" ] && [ "$1" != "singularity" ]; then
-    echo "Specify either 'singularity' or 'docker' as an argument to the script, ex., $0 docker"
+if [ "$1" != "local" ] && [ "$1" != "hpc" ]; then
+    echo "Specify either 'local' or 'hpc' as an argument to the script, ex., $0 local"
     exit 1
 fi
 

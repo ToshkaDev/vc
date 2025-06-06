@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$1" != "docker" ] && [ "$1" != "singularity" ]; then
-    echo "Specify either 'singularity' or 'docker' as an argument to the script, ex., $0 docker"
+if [ "$1" != "local" ] && [ "$1" != "hpc" ]; then
+    echo "Specify either 'local' or 'hpc' as an argument to the script, ex., $0 local"
     exit 1
 fi
 

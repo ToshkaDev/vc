@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$1" != "local" ] && [ "$1" != "hpc" ]; then
+    echo "Specify either 'local' or 'hpc' as an argument to the script, ex., $0 local"
+    exit 1
+fi
+
 SNP_DB_DIR=./data/snp_db
 mkdir -p $SNP_DB_DIR
 
