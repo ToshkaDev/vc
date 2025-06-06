@@ -88,12 +88,12 @@ if [ ! -f .${GPP_DIR}/${GPP_FILE} ]; then
     wget -O .${GPP_DIR}/${GPP_FILE}.idx ${GPP_LINK}.idx
 
     echo "Filter variants with allele frequency (AF) ≥ 0.01 to be used for variant filtering ..."
-    if [ "$1" == "docker" ]; then
+    if [ "$1" == "local" ]; then
         echo "Docker found. Running with Docker..."
         docker run --rm -w ${GPP_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
             bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf
 
-    elif [ "$1" == "singularity" ]; then
+    elif [ "$1" == "hpc" ]; then
         echo "Singularity found. Running with Singularity..."
         singularity exec --pwd ${GPP_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/bcftools_gatk4:d89f6490b3de65be \
             bcftools view -i 'INFO/AF>=0.01' ${GPP_DIR}/${GPP_FILE} -o ${GPP_DIR}/${GPP_FILE%.*}.af01.vcf

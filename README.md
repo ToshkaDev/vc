@@ -88,7 +88,7 @@ The **data/genome** folder currently includes human chr22. To work with the enti
 - known indels (Mills and 1000G) following [GATK Best Practices](https://gatk.broadinstitute.org/hc/en-us/articles/360035890811--How-to-Recalibrate-base-quality-scores-run-BQSR
 )
 
-`./prepare_common_snps.sh local` (for local setup)  `./prepare_common_snps.sh hpc` (for HPC). This is a long running task that prepares the files for common snps filtering. Because of this, for the first, longest, step (Step 1 below), the NCBI compressed prep files are already added to the repository and will simply be unpacked and concatenated.If the prep compressed files or the final file are not present in the data/ncbi_dbsnp folder, the full prep files for step 1 will be performed:
+`./prepare_common_snps.sh local` (for local setup)  `./prepare_common_snps.sh hpc` (for HPC). This is a long running task that prepares the files for common snps filtering. Because of this, for the first, longest, step (Step 1 below), the NCBI compressed prep files are already added to the repository and will simply be unpacked and concatenated. If the prep compressed files or the final file are not present in the data/ncbi_dbsnp folder, the full prep files for step 1 will be performed:
 - Step 1: downloads and prepares NCBI dbsnp database file (> 27.5 G, download time 10-20 min). The entire process takes  ~1.5 hour:
     - downloading gz compressed NCBI dbsnp database file (>27.5 G, 10-20 min)
     - initial preparation (~15 min)

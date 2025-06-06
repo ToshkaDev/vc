@@ -29,7 +29,7 @@ mkdir -p .${GENOME_DIR}/genome_index
 echo "Creating genome STAR index ..."
 # -w - setting working directory to ensure STAR writes logs and other temporary files 
 # within the mounted volume
-if [ "$1" == "docker" ]; then
+if [ "$1" == "local" ]; then
     echo "Docker found. Running with Docker..."
     docker run --rm -w ${GENOME_DIR}/genome_index -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
@@ -39,7 +39,7 @@ if [ "$1" == "docker" ]; then
         --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
         --sjdbOverhang ${OVERHANG}
 
-elif [ "$1" == "singularity" ]; then
+elif [ "$1" == "hpc" ]; then
     echo "Singularity found. Running with Singularity..."
     singularity exec --pwd ${GENOME_DIR}/genome_index --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
