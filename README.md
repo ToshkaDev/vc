@@ -79,17 +79,17 @@ cd vc
 - downloads and prepares an RNA edit sites file for the human genome. For other genomes provide an appropriate link (the RNA_EDIT_SITES_LINK variable)
 - downloads and prepares a low complexity regions file for the human genome. For other genomes provide and appropriate link (the LCR_LINK variable)
 
-`./create_genome_index.sh local` (for local setup) `./create_genome_index.sh hpc` (for HPC) creates a STAR genome index, with chr and scaffolds, primary assembly, and transcriptome as recommended by the STAR manual.
+`./create_genome_index.sh local|hpc`: creates a STAR genome index, with chr and scaffolds, primary assembly, and transcriptome as recommended by the STAR manual.
 
-The **data/genome** folder currently includes human chr22. To work with the entire human genome simply delete the genome.fa file in the ./data/genome folder before running `create_required_files.sh`. Genome indexing with STAR for the entire human geome (GRCh38 + GENCODE GTF annotaion file) will require ~100-150 GB of RAM. On a machine with 32 threads, SSD, --sjdbOverhang 100 (common for 101 bp reads), and 128–150 GB RAM available this can take ~1.5–2 hours.
+The **data/genome** folder currently includes human chr22. To work with the entire human genome simply delete the genome.fa file in the **/data/genome** folder before running `create_required_files.sh`. Genome indexing with STAR for the entire human geome (GRCh38 + GENCODE GTF annotaion file) will require ~100-150 GB of RAM. On a machine with 32 threads, SSD, --sjdbOverhang 100 (common for 101 bp reads), and 128–150 GB RAM available this can take ~1.5–2 hours.
 
-`./obtain_snp_dbs.sh local` (for local setup) `./obtain_snp_dbs.sh local` (for HPC):
+`./obtain_snp_dbs.sh local|hpc`:
 - obtains known variants (dbSNP for known SNPs)
 - known indels (Mills and 1000G) following [GATK Best Practices](https://gatk.broadinstitute.org/hc/en-us/articles/360035890811--How-to-Recalibrate-base-quality-scores-run-BQSR
 )
 
-`./prepare_common_snps.sh local` (for local setup)  `./prepare_common_snps.sh hpc` (for HPC). This is a long running task that prepares the files for common snps filtering. Because of this, for the first, longest, step (Step 1 below), the NCBI compressed prep files are already added to the repository and will simply be unpacked and concatenated. If the prep compressed files or the final file are not present in the data/ncbi_dbsnp folder, the full prep files for step 1 will be performed:
-- Step 1: downloads and prepares NCBI dbsnp database file (> 27.5 G, download time 10-20 min). The entire process takes  ~1.5 hour:
+`./prepare_common_snps.sh local|hpc`. This is a long running task that prepares the files for common snps filtering. Because of this, for the first, longest, step (Step 1 below), the NCBI compressed prep files are already added to the repository and will simply be unpacked and concatenated. If the prep compressed files or the final file are not present in the **data/ncbi_dbsnp** folder, the full prep files for step 1 will be performed:
+- Step 1: downloads and prepares NCBI dbsnp database file. The entire process takes  ~1.5 hour:
     - downloading gz compressed NCBI dbsnp database file (>27.5 G, 10-20 min)
     - initial preparation (~15 min)
     - labeling variants with allele frequency (AF) >= 0.01 (~15 min)
