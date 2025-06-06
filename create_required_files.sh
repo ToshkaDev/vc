@@ -38,7 +38,7 @@ fi
 ################
 echo "Creating simple fasta index, sequence, and BED files ..."
 
-if [ "$1" == "local" ]; then
+if [ "$1" == "local" ] && command -v docker &> /dev/null; then
     echo "Docker found. Running with Docker..."
     # 1) Create a simple fasta index file (.fai):
     echo "Creating simple fasta index file ..."
@@ -57,7 +57,7 @@ if [ "$1" == "local" ]; then
     docker run --rm -w ${GENOME_DIR} -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
     < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
 
-elif [ "$1" == "hpc" ]; then
+elif [ "$1" == "hpc" ] && command -v singularity &> /dev/null; then
     echo "Singularity found. Running with Singularity..."
     echo "Creating simple fasta index file ..."
     singularity exec --pwd ${GENOME_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464 samtools \
@@ -71,6 +71,8 @@ elif [ "$1" == "hpc" ]; then
     echo "Creating BED file (describes genomic intervals) ..."
     singularity exec --pwd ${GENOME_DIR} --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/bedops:2.4.41--0451d22c61ea1547 bash -c "gff2bed \
     < ${ANNOTATION} > ${ANNOTATION%.*}.bed"
+else
+    echo "No supported containerization tool matching argument '$1' was found in the environment."
 fi
 
 ################

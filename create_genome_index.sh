@@ -29,7 +29,7 @@ mkdir -p .${GENOME_DIR}/genome_index
 echo "Creating genome STAR index ..."
 # -w - setting working directory to ensure STAR writes logs and other temporary files 
 # within the mounted volume
-if [ "$1" == "local" ]; then
+if [ "$1" == "local" ] && command -v docker &> /dev/null; then
     echo "Docker found. Running with Docker..."
     docker run --rm -w ${GENOME_DIR}/genome_index -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
@@ -39,7 +39,7 @@ if [ "$1" == "local" ]; then
         --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
         --sjdbOverhang ${OVERHANG}
 
-elif [ "$1" == "hpc" ]; then
+elif [ "$1" == "hpc" ] && command -v singularity &> /dev/null; then
     echo "Singularity found. Running with Singularity..."
     singularity exec --pwd ${GENOME_DIR}/genome_index --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
@@ -48,4 +48,6 @@ elif [ "$1" == "hpc" ]; then
         --genomeFastaFiles ${GENOME_DIR}/${GENOME} \
         --sjdbGTFfile ${GENOME_DIR}/${ANNOTATION} \
         --sjdbOverhang ${OVERHANG}
+else
+    echo "No supported containerization tool matching argument '$1' was found in the environment."
 fi
