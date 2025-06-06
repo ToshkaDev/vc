@@ -10,7 +10,6 @@ if [ "$1" != "docker" ] && [ "$1" != "singularity" ]; then
 fi
 
 DATA_DIR=/data
-
 # Download the assembly report file to prepare a file containing the mapping of RefSeq genome assembly identifiers (e.g. GCF attachments) to chromosome names
 # To be used for filtering common snps from called variants
 ASSEMBLY_DIR=.${DATA_DIR}/assembly_mapping
@@ -33,35 +32,44 @@ fi
 DBSNP_DIR=.${DATA_DIR}/ncbi_dbsnp
 DBSNP_LINK=https://ftp.ncbi.nih.gov/snp/latest_release/VCF/GCF_000001405.40.gz
 DBSNP_FILE=ncbi_dbsnp_latest.gz
+FINAL_FILE=ncbi_dbsnp_latest.common.chr.tsv
 
 mkdir -p ${DBSNP_DIR}
 
-if [ ! -f ${DBSNP_DIR}/${DBSNP_FILE} ]; then
-    echo "Downloading gz compressed NBCI dbsnp database file (> 27.5 G, 10-20 min) ..."
-    wget -O ${DBSNP_DIR}/${DBSNP_FILE} ${DBSNP_LINK}
+# If the final file is not available perform the following steps
+if [ ! -f ${DBSNP_DIR}/${FINAL_FILE} ]; then
+    # First check if the compressed prepared files are available and uncompress and concatenate them to the final file if they are
+    if [ -f ${DBSNP_DIR}/${FINAL_FILE}.1.gz ] && [ -f ${DBSNP_DIR}/${FINAL_FILE}.2.gz ]; then
+        echo "The ${DBSNP_DIR}/${FINAL_FILE}.1.gz and ${DBSNP_DIR}/${FINAL_FILE}.2.gz file are detected. Unpacking and concatenating ..."
+        gunzip -c ${DBSNP_DIR}/${FINAL_FILE}.1.gz > ${DBSNP_DIR}/${FINAL_FILE}
+        gunzip -c ${DBSNP_DIR}/${FINAL_FILE}.2.gz >> ${DBSNP_DIR}/${FINAL_FILE}
+    # If those files are not available then perform all the necessary steps to obtain and prepare the final file
+    else
+        echo "Downloading gz compressed NBCI dbsnp database file (> 27.5 G, 10-20 min) ..."
+        wget -O ${DBSNP_DIR}/${DBSNP_FILE} ${DBSNP_LINK}
 
-    echo "Prepare file for filtering called variants (~10-15 min; requires RAM; can be helped through periodic cache dropping) ..."
-    zgrep "^#" ${DBSNP_DIR}/${DBSNP_FILE} > ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.vcf
+        echo "Prepare file for filtering called variants (~10-15 min; requires RAM; can be helped through periodic cache dropping) ..."
+        zgrep "^#" ${DBSNP_DIR}/${DBSNP_FILE} > ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.vcf
 
-    echo "Label COMMON for variants with AF>0.01 (1%) (10-15 min; requires RAM; can be helped through periodic cache dropping) ... "
-    zgrep ";COMMON" ${DBSNP_DIR}/${DBSNP_FILE} >> ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.vcf
+        echo "Label COMMON for variants with AF>=0.01 (1%) (10-15 min; requires RAM; can be helped through periodic cache dropping) ... "
+        zgrep ";COMMON" ${DBSNP_DIR}/${DBSNP_FILE} >> ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.vcf
 
-    # get chr and position for common variants (>0.01)
-    refseq=$(cut -f1 ${ASSEMBLY_DIR}/${MAPPING_FILE})
-    IFS=' ' read -ra refseq <<< $(echo $refseq)
-    chr=$(cut -f2 ${ASSEMBLY_DIR}/${MAPPING_FILE})
-    IFS=$' ' read -ra chr <<< $(echo $chr)
+        # get chr and position for common variants (>0.01)
+        refseq=$(cut -f1 ${ASSEMBLY_DIR}/${MAPPING_FILE})
+        IFS=' ' read -ra refseq <<< $(echo $refseq)
+        chr=$(cut -f2 ${ASSEMBLY_DIR}/${MAPPING_FILE})
+        IFS=$' ' read -ra chr <<< $(echo $chr)
 
-    touch ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.chr.tsv
+        touch ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.chr.tsv
 
-    echo "Prpare a file with common variants replacing refseq ids with corresponding chromosome ids in the NCBI dbsnp file (~40 min) ..."
-    for i in ${!refseq[@]}; do
-        date
-        echo ${chr[$i]}
-        grep ${refseq[$i]} ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.vcf | sed "s/${refseq[$i]}/${chr[$i]}/g" | cut -f1,2 >> ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.chr.tsv
-    done
+        echo "Prpare a file with common variants replacing refseq ids with corresponding chromosome ids in the NCBI dbsnp file (~40 min) ..."
+        for i in ${!refseq[@]}; do
+            date
+            echo ${chr[$i]}
+            grep ${refseq[$i]} ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.vcf | sed "s/${refseq[$i]}/${chr[$i]}/g" | cut -f1,2 >> ${DBSNP_DIR}/${DBSNP_FILE%.*}.common.chr.tsv
+        done
+    fi
 fi
-
 
 #####
 # Downloading a variant call format (VCF) file derived from the 1000 Genomes Project Phase 3 data, 

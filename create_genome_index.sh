@@ -18,6 +18,7 @@ if [ "$1" != "docker" ] && [ "$1" != "singularity" ]; then
     exit 1
 fi
 
+DATA_DIR=/data
 GENOME_DIR=/data/genome
 GENOME=genome.fa
 ANNOTATION=genome.gtf
@@ -30,7 +31,7 @@ echo "Creating genome STAR index ..."
 # within the mounted volume
 if [ "$1" == "docker" ]; then
     echo "Docker found. Running with Docker..."
-    docker run --rm -w ${GENOME_DIR}/genome_index -v ./data:/data community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
+    docker run --rm -w ${GENOME_DIR}/genome_index -v .${DATA_DIR}:${DATA_DIR} community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
         --runMode genomeGenerate \
         --genomeDir ${GENOME_DIR}/genome_index \
@@ -40,7 +41,7 @@ if [ "$1" == "docker" ]; then
 
 elif [ "$1" == "singularity" ]; then
     echo "Singularity found. Running with Singularity..."
-    singularity exec --pwd ${GENOME_DIR}/genome_index --bind ./data:/data docker://community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
+    singularity exec --pwd ${GENOME_DIR}/genome_index --bind .${DATA_DIR}:${DATA_DIR} docker://community.wave.seqera.io/library/star:2.7.10b--90133b03b1960405 STAR \
         --runThreadN 8 \
         --runMode genomeGenerate \
         --genomeDir ${GENOME_DIR}/genome_index \

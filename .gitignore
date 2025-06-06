@@ -10,7 +10,7 @@ data/snp_db/*
 data/rna_edit_sites/*
 data/lcr/*
 data/assembly_mapping/*
-data/ncbi_dbsnp/*
+data/ncbi_dbsnp/ncbi_dbsnp_latest.common.chr.tsv
 data/gpp_vcf/*
 *html
 
