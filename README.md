@@ -108,7 +108,7 @@ or
 ```
 nextflow run vc_pipeline.nf -profile hpc
 ```
-to run on a high-performance cluster
+to run on a high-performance cluster. Adjust the nextflow.config parameters according to your needs and the specifics of your cluster. You must specify the project account: process.clusterOptions = '--account=PAS1794' - replace PAS1794 with your project account.
 
 ## 🛠 Workflow Overview
 
