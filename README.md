@@ -1,4 +1,4 @@
-# 🧬 Nextflow Variant Calling Pipeline
+# 🧬 Nextflow Variant Calling Pipeline on RNA-seq data for tumour-only cancer cell lines
 <!-- Uncomment when GitHub Actions CI is configured
 ![Build Status](https://img.shields.io/github/actions/workflow/status/ToshkaDev/vc/vc_pipeline.nf?branch=main)
 -->
@@ -116,7 +116,7 @@ to run on a high-performance cluster. Adjust the nextflow.config parameters acco
 
 - Aggregated QC Reporting (MultiQC)
 
-- Alignment (STAR for RNA)
+- Alignment (STAR)
 
 - Pre-processing for variant calling:
   - AddOrReplaceReadGroups
