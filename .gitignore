@@ -12,5 +12,6 @@ data/lcr/*
 data/assembly_mapping/*
 data/ncbi_dbsnp/ncbi_dbsnp_latest.common.chr.tsv
 data/gpp_vcf/*
+data/vep_cache/
 *html
 

@@ -109,3 +109,25 @@ if [ ! -f ${LCR_DIR}/${LCR_FILE%.*} ]; then
     gunzip -c ${LCR_DIR}/${LCR_FILE} > ${LCR_DIR}/${LCR_FILE%.*}
     rm ${LCR_DIR}/${LCR_FILE}
 fi
+
+################
+# Download VEP cache. The VEP cache contains precompiled gene annotation data that 
+# VEP (Variant Effect Predictor) uses to rapidly annotate variants offline, without repeatedly querying remote Ensembl databases.
+# The VEP cache includes transcript annotations and gene models.
+VEP_CACHE=.${DATA_DIR}/vep_cache
+
+mkdir -p $VEP_CACHE
+echo "Downloading and staging VEP cache with precompiled gene annotation and gene models. Depending on the internet connection this
+may take up to several hours (~14 GB volume of compressed data)"
+if [ "$1" == "local" ] && command -v docker &> /dev/null; then
+    echo "Docker found. Running with Docker ..."
+    # vep_install script inside the ensembl-vep_vcf2maf image is used
+    docker run --rm -v $VEP_CACHE:/vep_cache community.wave.seqera.io/library/ensembl-vep_vcf2maf:6836d39d9a125f9f bash \
+        -c "export VEP_DOWNLOAD_METHOD=http && yes n | /opt/conda/bin/vep_install -a cf -s homo_sapiens -y GRCh38 -c /vep_cache"
+elif [ "$1" == "hpc" ] && command -v singularity &> /dev/null; then
+    echo "Singularity found. Running with Singularity ..."
+    singularity exec --bind $VEP_CACHE:/vep_cache docker://community.wave.seqera.io/library/ensembl-vep_vcf2maf:6836d39d9a125f9f bash \
+        -c "export VEP_DOWNLOAD_METHOD=http && yes n | /opt/conda/bin/vep_install -a cf -s homo_sapiens -y GRCh38 -c /vep_cache"
+else
+    echo "No supported containerization tool matching argument '$1' was found in the environment."
+fi

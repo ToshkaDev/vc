@@ -36,6 +36,10 @@ params.gpp3snp_af01="${projectDir}/data/gpp_vcf/1000G_phase3_sites.hg38.af01.vcf
 // File containing the latest ncbi dbsnp variants
 params.ncbi_dbsnp = "${projectDir}/data/ncbi_dbsnp/ncbi_dbsnp_latest.common.chr.tsv"
 
+// vcf2maf.pl script location
+params.vcf2maf_script = "${projectDir}/bin/vcf2maf.pl"
+params.vep_data_cache="${projectDir}/data/vep_cache"
+
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
 include { MULTIQC } from './modules/multiqc/main.nf'
@@ -49,6 +53,7 @@ include { GATK_VARIANT_FILTRATION } from './modules/gatk/variantfiltration/main.
 include { FILTER_RNA_EDIT_SITES } from './modules/filterRNAeditsites/main.nf'
 include { FILTER_LCRS } from './modules/filterlcrs/main.nf'
 include { FILTER_COMMON_VARIANTS } from './modules/filtercommonvars/main.nf'
+include { VCF_TO_MAF } from './modules/vcftomaf/main.nf'
 
 workflow {
 
@@ -87,4 +92,12 @@ workflow {
     FILTER_LCRS(FILTER_RNA_EDIT_SITES.out.rnaedit_filtered_vars, params.lcr_bed)
 
     FILTER_COMMON_VARIANTS(FILTER_LCRS.out.lcr_filtered_vars, params.gpp3snp_af01, params.ncbi_dbsnp)
+
+    all_vcfs = GATK_VARIANT_FILTRATION.out.filtered_variants
+        .join(FILTER_RNA_EDIT_SITES.out.rnaedit_filtered_vars)
+        .join(FILTER_LCRS.out.lcr_filtered_vars)
+        .join(FILTER_COMMON_VARIANTS.out.common_filtered_vars_indels)
+
+        
+    VCF_TO_MAF(all_vcfs, params.genome, params.vep_data_cache)
 }
