@@ -21,6 +21,11 @@ process VCF_TO_MAF {
 
     script:
     """
+    # + convert vcf to maf for genvisr
+    # vep: ~/anaconda3/envs/py3.7/bin/ => ensembl-vep-105 => gnomad r2.1.1 >125k exomes
+    # vcf2maf.pl => default max_subpop_af > 0.0004 any gnomad population
+    # here: --max-subpop-af 0.01 => af > 0.01
+    
     vcf_to_maf() {
         vcf=\$1
         tmpdir=/tmp/tmp_dir
@@ -84,11 +89,6 @@ process COMPRESS_MAF_VEP {
 
     script:
     """
-    # + convert vcf to maf for genvisr
-    # vep: ~/anaconda3/envs/py3.7/bin/ => ensembl-vep-105 => gnomad r2.1.1 >125k exomes
-    # vcf2maf.pl => default max_subpop_af > 0.0004 any gnomad population
-    # here: --max-subpop-af 0.01 => af > 0.01
-
     compress() {
         for f in "\$@"; do
             realfile=\$(readlink -f "\$f")
