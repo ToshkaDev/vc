@@ -54,6 +54,7 @@ include { FILTER_RNA_EDIT_SITES } from './modules/filterRNAeditsites/main.nf'
 include { FILTER_LCRS } from './modules/filterlcrs/main.nf'
 include { FILTER_COMMON_VARIANTS } from './modules/filtercommonvars/main.nf'
 include { VCF_TO_MAF } from './modules/vcftomaf/main.nf'
+include { COMPRESS_MAF_VEP } from './modules/vcftomaf/main.nf'
 
 workflow {
 
@@ -100,4 +101,6 @@ workflow {
 
         
     VCF_TO_MAF(all_vcfs, params.genome, params.vep_data_cache)
+
+    COMPRESS_MAF_VEP(VCF_TO_MAF.out.all_maf_vep)
 }
