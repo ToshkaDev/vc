@@ -4,12 +4,9 @@ process ANNOTATE_AND_ANALYZE_VARIANTS {
     publishDir "results/annotatevariants", mode: 'copy'
 
     input:
-        path "snp/*.vcf.gz"
-        path "snp/*.vcf.maf.gz"
-        path "file2sample.csv"
-        path "tables/star_stat_summary.tsv"
-        path "snp/stats_hc_*.txt"
-    
+        path file2sample
+        path stats_folder, dir: true
+
     output:
         path "tables/snv_indel_*.tsv"
         path "plots/*.pdf"
@@ -18,6 +15,6 @@ process ANNOTATE_AND_ANALYZE_VARIANTS {
 
     script:
     """
-    Rscript scripts/analyze_variants.R
+    Rscript scripts/analyze_variants.R ${file2sample} ${stats_folder}
     """
 }

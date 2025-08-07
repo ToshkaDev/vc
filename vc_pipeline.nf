@@ -40,6 +40,11 @@ params.ncbi_dbsnp = "${projectDir}/data/ncbi_dbsnp/ncbi_dbsnp_latest.common.chr.
 params.vcf2maf_script = "${projectDir}/bin/vcf2maf.pl"
 params.vep_data_cache="${projectDir}/data/vep_cache"
 
+// params for annotatevairants process
+params.vcftomaf = "${projectDir}/results/vcftomaf"
+params.stats = "${projectDir}/results/collectstats"
+params.file2sample = "${projectDir}/data/file2sample.csv"
+
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
 include { MULTIQC } from './modules/multiqc/main.nf'
@@ -55,6 +60,7 @@ include { FILTER_LCRS } from './modules/filterlcrs/main.nf'
 include { FILTER_COMMON_VARIANTS } from './modules/filtercommonvars/main.nf'
 include { VCF_TO_MAF } from './modules/vcftomaf/main.nf'
 include { COMPRESS_MAF_VEP } from './modules/vcftomaf/main.nf'
+include { COLLECTSTATS } from './modules/collectstats/main.nf'
 
 workflow {
 
@@ -103,4 +109,11 @@ workflow {
     VCF_TO_MAF(all_vcfs, params.genome, params.vep_data_cache)
 
     COMPRESS_MAF_VEP(VCF_TO_MAF.out.all_maf_vep)
+
+
+    COLLECTSTATS(all_vcfs)
+
+    def vcftomaf_folder = Channel.fromPath(params.vcftomaf)
+    def stats_folder = Channel.fromPath(params.stats)
+    def file2_sample = Channel.fromPath(params.file2sample)
 }

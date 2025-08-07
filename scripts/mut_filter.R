@@ -10,12 +10,18 @@ library(data.table)
 library(ggplot2)
 library(tidyr)
 
+args <- commandArgs(trailingOnly = TRUE)
+
+# Expecting 2 arguments
+file2sample <- args[1]
+STATS_FOLDER <- paste0(args[2], "/")
+
 expname = paste("_",basename(getwd()), "_gatk_hc_dbsnp", sep="")
 
 
 # get filtered mutations with indels
 # get subtypes
-samples = read.csv("file2sample.csv")
+samples = read.csv(file2sample)
 samples = samples[!duplicated(samples$cell_line), ]
 
 # Function to load vcf from haplotypecaller
@@ -44,14 +50,14 @@ Load_vcf_hc <- function(vcf_file, sample){
 # breast cancer
 Mut_calls <- NULL
 count = 1
-for (sample in samples$sampleName) {
-  bc = Load_vcf_hc(paste("snp/", sample, ".hc.pass2.lcr.dbsnp.vcf.gz", sep=""), sample)
+for (sample in samples$sample_id) {
+  bc = Load_vcf_hc(paste(STATS_FOLDER, sample, ".hc.pass2.lcr.dbsnp.vcf.gz", sep=""), sample)
   bc$sampleID = sample
   bc <- bc[bc$Depth >= 5,] # filter depth
 
   # take out mutations gnomad af>0.01 => in maf FILTER="common_variant"
   # + filter coding variants
-  files_vep = paste("snp/", sample, ".hc.pass2.lcr.dbsnp.vcf.maf.gz", sep="")
+  files_vep = paste(STATS_FOLDER, sample, ".hc.pass2.lcr.dbsnp.vcf.maf.gz", sep="")
   vep = read.csv(gzfile(files_vep), header=T, stringsAsFactors=F, sep = "\t", comment.char="#")
   vep = vep[grep("protein_coding", vep$BIOTYPE), c(1:16, 35:43, 47:75, 77:87, 93:114)]
   vep = vep[vep$HGVSp!="", ]
@@ -111,14 +117,16 @@ dev.off()
 
 
 # merge with number for all mutation and further filter
-all = read.csv("snp/stats_hc_all.txt", sep=":", header=FALSE)
+
+all = read.csv(file = file.path(STATS_FOLDER, "stats_hc_all.txt"), sep=":", header=FALSE)
 colnames(all) = c("cell_line", "all")
 all$cell_line = gsub("\\.hc\\.vcf\\.gz", "", all$cell_line)
-pass = read.csv("snp/stats_hc_pass.txt", sep=":", header=FALSE)
-pass2 = read.csv("snp/stats_hc_pass2.txt", sep=":", header=FALSE)
-lcr = read.csv("snp/stats_hc_lcr.txt", sep=":", header=FALSE)
-kG = read.csv("snp/stats_hc_1kG.txt", sep=":", header=FALSE)
-dbsnp = read.csv("snp/stats_hc_dbsnp.txt", sep=":", header=FALSE)
+
+pass = read.csv(file = file.path(STATS_FOLDER, "stats_hc_pass.txt"), sep=":", header=FALSE)
+pass2 = read.csv(file = file.path(STATS_FOLDER, "stats_hc_pass2.txt"), sep=":", header=FALSE)
+lcr = read.csv(file = file.path(STATS_FOLDER, "stats_hc_lcr.txt"), sep=":", header=FALSE)
+kG = read.csv(file = file.path(STATS_FOLDER, "stats_hc_1kG.txt"), sep=":", header=FALSE)
+dbsnp = read.csv(file = file.path(STATS_FOLDER, "stats_hc_dbsnp.txt"), sep=":", header=FALSE)
 all$pass = pass$V2
 all$edit = pass2$V2
 all$lcr = lcr$V2
