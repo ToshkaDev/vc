@@ -9,15 +9,15 @@ process VCF_TO_MAF {
 
     input:
         tuple val(sample_id), path(hc_pass_vcf), path(_), path(hc_pass2_vcf), path(hc_pass2_lcr_vcf), 
-        path(hc_pass2_lcr_1kG_vcf), path(hc_pass2_lcr_dbsnp_vcf) 
+            path(hc_pass2_lcr_1kG_vcf), path(hc_pass2_lcr_dbsnp_vcf) 
         path genome
         path vep_data_cache
 
     output:
         tuple val(sample_id), path("*.hc.pass.vcf.maf"), path("*.hc.pass.vep.vcf"), path("*.hc.pass2.vcf.maf"), 
-        path("*.hc.pass2.vep.vcf"), path("*.hc.pass2.lcr.vcf.maf"), path("*.hc.pass2.lcr.vep.vcf"), 
-        path("*.hc.pass2.lcr.1kG.vcf.maf"), path("*.hc.pass2.lcr.1kG.vep.vcf"), path("*.hc.pass2.lcr.dbsnp.vcf.maf"), 
-        path("*.hc.pass2.lcr.dbsnp.vep.vcf"), emit: all_maf_vep
+            path("*.hc.pass2.vep.vcf"), path("*.hc.pass2.lcr.vcf.maf"), path("*.hc.pass2.lcr.vep.vcf"), 
+            path("*.hc.pass2.lcr.1kG.vcf.maf"), path("*.hc.pass2.lcr.1kG.vep.vcf"), path("*.hc.pass2.lcr.dbsnp.vcf.maf"), 
+            path("*.hc.pass2.lcr.dbsnp.vep.vcf"), emit: all_maf_vep
 
     script:
     """
@@ -77,15 +77,18 @@ process COMPRESS_MAF_VEP {
 
     input:
         tuple val(sample_id), path(pass_vcf_maf), path(pass_vep), path(pass2_vcf_maf), path(pass2_vep), 
-        path(pass2_lcr_vcf_maf), path(pass2_lcr_vep), path(pass2_lcr_1kG_vcf_maf), 
+            path(pass2_lcr_vcf_maf), path(pass2_lcr_vep), path(pass2_lcr_1kG_vcf_maf), 
         path(pass2_lcr_1kG_vep), path(pass2_lcr_dbsnp_vcf_maf), path(pass2_lcr_dbsnp_vep)
 
     output:
-        tuple val(sample_id), path("${pass_vcf_maf.name}.gz"), path("${pass_vep.name}.gz"), emit: pass_vcf_gz
-        tuple val(sample_id), path("${pass2_vcf_maf.name}.gz"), path("${pass2_vep.name}.gz"), emit: pass2_vcf_gz
-        tuple val(sample_id), path("${pass2_lcr_vcf_maf.name}.gz"), path("${pass2_lcr_vep.name}.gz"), emit: pass2_lcr_vcf_gz
-        tuple val(sample_id), path("${pass2_lcr_1kG_vcf_maf.name}.gz"), path("${pass2_lcr_1kG_vep.name}.gz"), emit: pass2_lcr_1kG_vcf_gz
-        tuple val(sample_id), path("${pass2_lcr_dbsnp_vcf_maf.name}.gz"), path("${pass2_lcr_dbsnp_vep.name}.gz"), emit: pass2_lcr_dbsnp_vcf_gz
+        // tuple val(sample_id), path("${pass_vcf_maf.name}.gz"), path("${pass_vep.name}.gz"), emit: pass_vcf_gz
+        // tuple val(sample_id), path("${pass2_vcf_maf.name}.gz"), path("${pass2_vep.name}.gz"), emit: pass2_vcf_gz
+        // tuple val(sample_id), path("${pass2_lcr_vcf_maf.name}.gz"), path("${pass2_lcr_vep.name}.gz"), emit: pass2_lcr_vcf_gz
+        // tuple val(sample_id), path("${pass2_lcr_1kG_vcf_maf.name}.gz"), path("${pass2_lcr_1kG_vep.name}.gz"), emit: pass2_lcr_1kG_vcf_gz
+        // tuple val(sample_id), path("${pass2_lcr_dbsnp_vcf_maf.name}.gz"), path("${pass2_lcr_dbsnp_vep.name}.gz"), emit: pass2_lcr_dbsnp_vcf_gz
+        tuple val(sample_id), path("${pass_vcf_maf.name}.gz"), path("${pass2_vcf_maf.name}.gz"), path("${pass2_lcr_vcf_maf.name}.gz"), 
+            path("${pass2_lcr_1kG_vcf_maf.name}.gz"), path("${pass2_lcr_dbsnp_vcf_maf.name}.gz"), emit: compressed_maff
+        path("*.vep.vcf.gz")
 
     script:
     """

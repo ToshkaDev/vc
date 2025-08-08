@@ -60,7 +60,7 @@ include { FILTER_LCRS } from './modules/filterlcrs/main.nf'
 include { FILTER_COMMON_VARIANTS } from './modules/filtercommonvars/main.nf'
 include { VCF_TO_MAF } from './modules/vcftomaf/main.nf'
 include { COMPRESS_MAF_VEP } from './modules/vcftomaf/main.nf'
-include { COLLECTSTATS } from './modules/collectstats/main.nf'
+//include { COLLECTSTATS } from './modules/collectstats/main.nf'
 
 workflow {
 
@@ -72,7 +72,10 @@ workflow {
 
     STAR(FASTP.out.trimmed_reads, params.genome_index)
 
-    MULTIQC(FASTP.out.json.mix(STAR.out.logs).collect(), params.report_name)
+    def star_log_paths = STAR.out.logs.map { sample_id, path -> path }
+    MULTIQC(FASTP.out.json.mix(star_log_paths).collect(), params.report_name)
+
+    //MULTIQC(FASTP.out.json.mix(STAR.out.logs).collect(), params.report_name)
 
     GATK_ADD_REPLACE_READ_GROUPS(STAR.out.bam)
 
@@ -111,9 +114,8 @@ workflow {
     COMPRESS_MAF_VEP(VCF_TO_MAF.out.all_maf_vep)
 
 
-    COLLECTSTATS(all_vcfs)
+    COLLECT_STATS(GATK_HAPLOTYPE_CALLER.out.calledsnps, all_vcfs, COMPRESS_MAF_VEP.out.compressed_maff, STAR.out.logs)
 
-    def vcftomaf_folder = Channel.fromPath(params.vcftomaf)
-    def stats_folder = Channel.fromPath(params.stats)
-    def file2_sample = Channel.fromPath(params.file2sample)
+    //def stats_folder = Channel.fromPath(params.stats)
+    //def file2_sample = Channel.fromPath(params.file2sample)
 }
