@@ -44,9 +44,11 @@ params.vep_data_cache="${projectDir}/data/vep_cache"
 params.vcftomaf = "${projectDir}/results/vcftomaf"
 params.stats = "${projectDir}/results/collectstats"
 params.file2sample = "${projectDir}/data/file2sample.csv"
+params.star_stats_script = "${projectDir}/scripts/star_stats.R"
 
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
+include { STAR_STATS } from './modules/starstats/main.nf'
 include { MULTIQC } from './modules/multiqc/main.nf'
 include { GATK_ADD_REPLACE_READ_GROUPS } from './modules/gatk/readgroups/main.nf'
 include { GATK_MARK_DUPLICATES } from './modules/gatk/markduplicates/main.nf'
@@ -71,6 +73,14 @@ workflow {
     FASTP(read_ch)
 
     STAR(FASTP.out.trimmed_reads, params.genome_index)
+
+    STAR_STATS(STAR.out.logs
+        // drop sample_id, keep file
+        .map { id, file -> file }
+        // gather into one list
+        .collect(), params.star_stats_script           
+    )
+
 
     def star_log_paths = STAR.out.logs.map { sample_id, path -> path }
     MULTIQC(FASTP.out.json.mix(star_log_paths).collect(), params.report_name)
@@ -114,7 +124,7 @@ workflow {
     COMPRESS_MAF_VEP(VCF_TO_MAF.out.all_maf_vep)
 
 
-    COLLECT_STATS(GATK_HAPLOTYPE_CALLER.out.calledsnps, all_vcfs, COMPRESS_MAF_VEP.out.compressed_maff, STAR.out.logs)
+    //COLLECT_STATS(GATK_HAPLOTYPE_CALLER.out.calledsnps, all_vcfs, COMPRESS_MAF_VEP.out.compressed_maff, STAR.out.logs)
 
     //def stats_folder = Channel.fromPath(params.stats)
     //def file2_sample = Channel.fromPath(params.file2sample)
