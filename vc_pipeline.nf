@@ -128,5 +128,5 @@ workflow {
     file2_sample = Channel.fromPath(params.file2sample)
     stats_folder = Channel.fromPath(params.stats)
     
-    ANNOTATE_VARIANTS(file2_sample, stats_folder, params.mut_filter_script)
+    ANNOTATE_VARIANTS(file2_sample, stats_folder, params.mut_filter_script, MERGE_STATS.out.merged_stats.collect())
 }

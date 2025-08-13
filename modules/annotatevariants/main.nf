@@ -7,6 +7,7 @@ process ANNOTATE_VARIANTS {
         path file2sample
         path stats_folder
         path mut_filter_script
+        path merged_stats
 
     output:
         path "*.tsv"

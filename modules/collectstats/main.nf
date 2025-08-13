@@ -45,7 +45,7 @@ process MERGE_STATS {
         path(stats)
 
     output:
-        path "stats_*.txt"
+        path "stats_*.txt", emit: merged_stats
 
     script:
     """
