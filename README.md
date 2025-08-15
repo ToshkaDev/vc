@@ -3,10 +3,12 @@
 ![Build Status](https://img.shields.io/github/actions/workflow/status/ToshkaDev/vc/vc_pipeline.nf?branch=main)
 -->
 ![Nextflow](https://img.shields.io/badge/Nextflow-%E2%9C%94%20v24.10%2B-brightgreen)
-![License](https://img.shields.io/github/license/ToshkaDev/vc)
+[![Docker](https://img.shields.io/badge/docker-ready-blue?logo=docker)](https://www.docker.com/)
+[![Singularity](https://img.shields.io/badge/singularity-ready-orange?logo=singularity)](https://sylabs.io/singularity/)
 ![System Requirements](https://img.shields.io/badge/system-Java%2011%2B%20%7C%20Linux%2FmacOS%20%7C%20Nextflow%2024.10%2B-blue)
-![Status](https://img.shields.io/badge/status-active%20development-yellow)
 ![GATK Support](https://img.shields.io/badge/GATK-✓%20Supported-blueviolet)
+![Status](https://img.shields.io/badge/status-active%20development-yellow)
+![License](https://img.shields.io/github/license/ToshkaDev/vc)
 <!-- Uncomment when ready
 ![Docker](https://img.shields.io/badge/container-Docker%20%7C%20Singularity-orange)
 -->
@@ -78,6 +80,7 @@ cd vc
 - crates a BED file from the provided annotation file. The script can work with other genomes if corresponding links are provided (variables GENOME_LINK and GENOME_ANNOTATION_LINK)
 - downloads and prepares an RNA edit sites file for the human genome. For other genomes provide an appropriate link (the RNA_EDIT_SITES_LINK variable)
 - downloads and prepares a low complexity regions file for the human genome. For other genomes provide and appropriate link (the LCR_LINK variable)
+- downloads and prepares the Ensemble VEP cache. The VEP cache is a local copy of Ensembl’s genomic data including gene annotations, transcript structures, and variant consequences. This allows VEP to annotate variants quickly without repeatedly querying the Ensembl servers. Because the cache size is >14 GB, this step can take approximately 2 hours.
 
 `./create_genome_index.sh local|hpc`: creates a STAR genome index, with chr and scaffolds, primary assembly, and transcriptome as recommended by the STAR manual.
 
@@ -130,7 +133,9 @@ to run on a high-performance cluster. Adjust the nextflow.config parameters acco
   - Filtering RNA edit sites (using vcftools and a set of RNA edit sites)
   - Filtering low complexity regions (using SnpSift and a corresponding set of marked low complexity regions)
   - Filtering common snps (using the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set)
-- Variant Annotation using Ensembl Variant Effect Predictor (Ensembl VEP)
+  
+- Variant Annotation using Ensembl Variant Effect Predictor
+
 - Processing and Visualization
 
 ## 📦 Inputs
@@ -143,21 +148,25 @@ Reference genome (e.g. Homo_sapiens_assembly38.fasta)
 
 Known variant sites: dbSNP, Mills_and_1000G_gold_standard.indels
 
-RNA edits sites (basic knowledge about RNA-edit sites can be found here: https://academic.oup.com/nar/article/49/D1/D1012/5940507?login=true)
+RNA edits sites (basic knowledge about RNA-edit sites can be found [here](https://academic.oup.com/nar/article/49/D1/D1012/5940507)
 
-Low complexity regions (information about LCR can be found here: https://academic.oup.com/bioinformatics/article/30/20/2843/2422145?login=true)
+Low complexity regions (information about LCR can be found [here](https://academic.oup.com/bioinformatics/article/30/20/2843/2422145)
 
-Sample sheet CSV with sample metadata
+Sample sheet CSV with sample identifiers and mapped reads: provided [example](https://github.com/ToshkaDev/vc/blob/main/data/paired-end.csv)
+
+Ensembl VEP cache (>14GB archived)
 
 ## 📤 Outputs
 
 Quality metrics
 
+Log files and structured QC reports
+
 Aligned, deduplicated, and recalibrated BAM files
 
-Raw and recalibrated VCF/GVCF variant calls
+Raw and recalibrated VCF variant calls
 
-Log files and structured QC reports
+Variant annotation results and visualization
 
 ## ✅ Testing
 
@@ -171,7 +180,7 @@ Running all the tests at once: ``` nf-test test ```
 
 ## Built With
 
-Nextflow, shell, Docker; GATK 4.5+, fastp, SnpSift, vcftools, STAR, MultiQC
+Nextflow, shell, Docker, Singularity (Apptainer); GATK 4.5+, fastp, SnpSift, vcftools, STAR, MultiQC, Ensembl VEP
 
 ## Documentation
 
