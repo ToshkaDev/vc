@@ -130,6 +130,8 @@ to run on a high-performance cluster. Adjust the nextflow.config parameters acco
   - Filtering RNA edit sites (using vcftools and a set of RNA edit sites)
   - Filtering low complexity regions (using SnpSift and a corresponding set of marked low complexity regions)
   - Filtering common snps (using the 1000 Genomes Project Phase 3 data variant sites and the latest NCBI dbsnp set)
+- Variant Annotation using Ensembl Variant Effect Predictor (Ensembl VEP)
+- Processing and Visualization
 
 ## 📦 Inputs
 
