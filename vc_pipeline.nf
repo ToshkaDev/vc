@@ -45,6 +45,7 @@ params.stats = "${projectDir}/results/collectstats"
 params.file2sample = "${projectDir}/data/file2sample.csv"
 params.star_stats_script = "${projectDir}/scripts/star_stats.R"
 params.mut_filter_script = "${projectDir}/scripts/mut_filter.R"
+params.filter_stats_script = "${projectDir}/scripts/filter_stats.R"
 
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
@@ -65,6 +66,7 @@ include { COMPRESS_MAF_VEP } from './modules/vcftomaf/main.nf'
 include { COLLECT_STATS } from './modules/collectstats/main.nf'
 include { MERGE_STATS } from './modules/collectstats/main.nf'
 include { ANNOTATE_VARIANTS } from './modules/annotatevariants/main.nf'
+include { FILTER_STATS } from './modules/filterstats/main.nf'
 
 workflow {
 
