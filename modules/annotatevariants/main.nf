@@ -1,5 +1,5 @@
 process ANNOTATE_VARIANTS {
-    container 'bioconductor/bioconductor_docker:RELEASE_3_21'
+    container 'bioliners/bioconductor_r3_21-vc:latest'
 
     publishDir "results/annotatevariants", mode: 'copy'
 
@@ -14,7 +14,6 @@ process ANNOTATE_VARIANTS {
 
     script:
     """
-    
     Rscript $mut_filter_script ${file2sample} ${stats_folder}
     """
 }

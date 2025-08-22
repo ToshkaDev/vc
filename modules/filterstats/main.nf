@@ -1,7 +1,5 @@
-#!/usr/bin/env nextflow
-
 process FILTER_STATS {
-    container 'bioconductor/bioconductor_docker:RELEASE_3_21'
+    container 'bioliners/bioconductor_r3_21-vc:latest'
 
     publishDir "results/filterstats", mode: 'copy'
 
