@@ -41,11 +41,13 @@ params.vep_data_cache="${projectDir}/data/vep_cache"
 
 // params for annotatevairants process
 params.vcftomaf = "${projectDir}/results/vcftomaf"
-params.stats = "${projectDir}/results/collectstats"
+params.stats_folder = "${projectDir}/results/collectstats"
+params.annotatevars_folder = "${projectDir}/results/annotatevariants"
+params.starstats_folder = "${projectDir}/results/starstats"
 params.file2sample = "${projectDir}/data/file2sample.csv"
 params.star_stats_script = "${projectDir}/scripts/star_stats.R"
 params.mut_filter_script = "${projectDir}/scripts/mut_filter.R"
-params.filter_stats_script = "${projectDir}/scripts/filter_stats.R"
+params.filter_stats_vis_script = "${projectDir}/scripts/filter_stats_visualize.R"
 
 include { FASTP } from './modules/fastp/main.nf'
 include { STAR } from './modules/star/main.nf'
@@ -66,7 +68,7 @@ include { COMPRESS_MAF_VEP } from './modules/vcftomaf/main.nf'
 include { COLLECT_STATS } from './modules/collectstats/main.nf'
 include { MERGE_STATS } from './modules/collectstats/main.nf'
 include { ANNOTATE_VARIANTS } from './modules/annotatevariants/main.nf'
-include { FILTER_STATS } from './modules/filterstats/main.nf'
+include { FILTER_STATS_VISUALIZE } from './modules/filterstatsvis/main.nf'
 
 workflow {
 
@@ -128,7 +130,13 @@ workflow {
     MERGE_STATS(COLLECT_STATS.out.stats_files.collect())
 
     file2_sample = Channel.fromPath(params.file2sample)
-    stats_folder = Channel.fromPath(params.stats)
+    stats_folder = Channel.fromPath(params.stats_folder)
     
     ANNOTATE_VARIANTS(file2_sample, stats_folder, params.mut_filter_script, MERGE_STATS.out.merged_stats.collect())
+
+    annotatevars_folder = Channel.fromPath(params.annotatevars_folder)
+    starstats_folder = Channel.fromPath(params.starstats_folder)
+
+    FILTER_STATS_VISUALIZE(stats_folder, annotatevars_folder, starstats_folder, params.filter_stats_vis_script, ANNOTATE_VARIANTS.out.annotated_vars.collect())
+
 }

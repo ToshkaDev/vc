@@ -10,7 +10,7 @@ process ANNOTATE_VARIANTS {
         path merged_stats
 
     output:
-        path "*.tsv"
+        path "*.tsv", emit: annotated_vars
 
     script:
     """

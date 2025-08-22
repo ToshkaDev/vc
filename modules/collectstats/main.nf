@@ -24,7 +24,7 @@ process COLLECT_STATS {
     """
     set -euo pipefail
     # q20
-    printf "%s:%s\\n" "$hc_vcf" "\$(zgrep -c '^chr' ${hc_vcf} || echo 0)" > ${sample_id}_hc_all.txt
+    printf "%s.gz:%s\\n" "$hc_vcf" "\$(zgrep -c '^chr' ${hc_vcf} || echo 0)" > ${sample_id}_hc_all.txt
     # q20 + depth
     printf "%s:%s\\n" "$hc_pass_vcf" "\$(zgrep -c '^chr' ${hc_pass_vcf} || echo 0)" > ${sample_id}_hc_pass.txt
     # q20 + depth + rna_edit

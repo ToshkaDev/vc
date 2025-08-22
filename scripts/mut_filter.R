@@ -15,9 +15,6 @@ if(length(new.packages)) {
   message("All required R packages are already installed.")
 }
 
-# Create output directory if it  doesn't exist
-if (!dir.exists("tables")) dir.create("tables")
-
 # Load libraries
 library(dplyr)
 library(data.table)
@@ -31,7 +28,8 @@ file2sample <- args[1]
 STATS_FOLDER <- paste0(args[2], "/")
 
 # Expression name for output files (based on current directory)
-expname = paste0("_", basename(getwd()), "_gatk_hc_dbsnp")
+# expname = paste0("_", basename(getwd()), "_gatk_hc_dbsnp")
+expname = ""
 
 # Read samples and remove duplicates by cell_line
 samples <- read.csv(file2sample)
